@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "macros/media.html" import framed_image %}
+{% from "macros/buttons.html" import trace_cta %}
+
+{% block title %}Page Not Found — The Bower{% endblock %}
+
+{% block content %}
+  <section class="error-page" aria-labelledby="error-title">
+    <div class="site-shell error-page__grid">
+      <div class="error-page__copy">
+        <p class="eyebrow">404 · A quiet wrong turn</p>
+        <h1 id="error-title">This table<br>isn’t set.</h1>
+        <p>The page may have moved, but the dining room is still just through here.</p>
+        {{ trace_cta(url_for('home'), 'Return to The Bower') }}
+      </div>
+      {{ framed_image(
+        'img/hero-graded.png',
+        'The warmly lit dining room at The Bower',
+        'error-page__frame',
+        'error-page__image',
+        'eager',
+        (480, 960),
+        '(min-width: 768px) 48vw, calc(100vw - 2rem)',
+        1726,
+        911,
+        'high'
+      ) }}
+    </div>
+  </section>
+{% endblock %}

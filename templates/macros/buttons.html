@@ -1,0 +1,12 @@
+{% macro trace_cta(href, label, theme='dark') -%}
+  <a class="trace-cta trace-cta--{{ theme }}" href="{{ href }}">
+    <svg class="trace-cta__border" viewBox="0 0 100 36" preserveAspectRatio="none" aria-hidden="true">
+      <rect class="trace-cta__trace" pathLength="1" x="0.75" y="0.75" width="98.5" height="34.5" rx="0" />
+    </svg>
+    <span class="trace-cta__labels" aria-hidden="true">
+      <span>{{ label }}</span>
+      <span>{{ label }}</span>
+    </span>
+    <span class="sr-only">{{ label }}</span>
+  </a>
+{%- endmacro %}

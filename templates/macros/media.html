@@ -1,0 +1,24 @@
+{% macro framed_image(filename, alt, class_name='', image_class='', loading='lazy', widths=(480, 960, 1600), sizes='100vw', width='', height='', fetchpriority='auto') -%}
+  {% set stem = filename.rsplit('.', 1)[0] %}
+  <figure class="framed-media {{ class_name }}" data-framed-media>
+    <div class="framed-media__mat">
+      <picture>
+        <source
+          type="image/webp"
+          srcset="{% for item_width in widths %}{{ url_for('static', filename=stem ~ '-' ~ item_width ~ '.webp') }} {{ item_width }}w{% if not loop.last %}, {% endif %}{% endfor %}"
+          sizes="{{ sizes }}"
+        >
+        <img
+          class="framed-media__image {{ image_class }}"
+          src="{{ url_for('static', filename=filename) }}"
+          alt="{{ alt }}"
+          loading="{{ loading }}"
+          decoding="async"
+          fetchpriority="{{ fetchpriority }}"
+          {% if width %}width="{{ width }}"{% endif %}
+          {% if height %}height="{{ height }}"{% endif %}
+        >
+      </picture>
+    </div>
+  </figure>
+{%- endmacro %}

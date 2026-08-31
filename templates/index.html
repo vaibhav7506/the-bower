@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+{% from "macros/media.html" import framed_image %}
+{% from "macros/buttons.html" import trace_cta %}
+
+{% block content %}
+  <section class="hero-section" aria-labelledby="hero-title" data-time-aware-hero>
+    <div class="site-shell hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">A dining room for slower evenings</p>
+        <div class="brass-rule" aria-hidden="true"></div>
+        <h1 id="hero-title" class="hero-title">A quiet table,<br>made memorable.</h1>
+        <p class="hero-intro">
+          Seasonal plates, generous hospitality, and a room designed for lingering—
+          gathered beneath brass light and living green.
+        </p>
+        {{ trace_cta('#visit', 'Plan your evening') }}
+      </div>
+
+      {{ framed_image(
+        'img/hero-graded.png',
+        'The Bower dining room with a brass-framed garden, dark bar and burgundy seating',
+        'hero-frame',
+        'hero-image',
+        'eager',
+        (480, 960, 1600),
+        '(min-width: 1024px) 58vw, calc(100vw - 2rem)',
+        1726,
+        911,
+        'high'
+      ) }}
+    </div>
+  </section>
+
+  <section id="story" class="story-section" aria-labelledby="story-title">
+    <div class="story-transition-line" data-story-line aria-hidden="true"></div>
+    <div class="story-transition-curtain" data-story-curtain aria-hidden="true"></div>
+    <div class="site-shell">
+      <div class="section-heading section-heading--story">
+        <p class="eyebrow">The room</p>
+        <h2 id="story-title" class="section-title">Warm light.<br>Thoughtful detail.</h2>
+        <p class="section-lede">
+          The Bower is shaped around the pleasures that cannot be rushed: a drink settling
+          into conversation, the change of evening light, and a kitchen responding to the season.
+        </p>
+      </div>
+
+      <div class="story-grid">
+        {{ framed_image(
+          'img/hero-graded.png',
+          'The Bower bar and its softly lit bottle-green cabinetry',
+          'story-frame story-frame--bar',
+          'story-image story-image--bar',
+          'lazy',
+          (480, 960, 1600),
+          '(min-width: 768px) 58vw, calc(100vw - 2rem)',
+          1726,
+          911
+        ) }}
+
+        <div class="story-note">
+          <p class="story-note__number">01</p>
+          <p>Locally led, ingredient first. The menu changes when the garden and market do.</p>
+        </div>
+
+        {{ framed_image(
+          'img/hero-graded.png',
+          'Living greenery held within the dining room’s fine brass frame',
+          'story-frame story-frame--garden',
+          'story-image story-image--garden',
+          'lazy',
+          (480, 960),
+          '(min-width: 768px) 42vw, calc(100vw - 2rem)',
+          1726,
+          911
+        ) }}
+
+        <div class="story-quote">
+          <p>“A room should hold the evening gently.”</p>
+          <span>The Bower philosophy</span>
+        </div>
+
+        {{ framed_image(
+          'img/hero-graded.png',
+          'Burgundy dining chairs and a table set under warm brass light',
+          'story-frame story-frame--table',
+          'story-image story-image--table',
+          'lazy',
+          (480, 960),
+          '(min-width: 768px) 52vw, calc(100vw - 2rem)',
+          1726,
+          911
+        ) }}
+      </div>
+    </div>
+  </section>
+
+  <section class="voices-section" aria-labelledby="voices-title">
+    <div class="site-shell voices-heading">
+      <p class="eyebrow">Guest voices</p>
+      <h2 id="voices-title" class="sr-only">What our guests say</h2>
+    </div>
+    <div class="voices-viewport">
+      <div class="voices-track">
+        <blockquote>“The kind of dinner that quietly becomes an occasion.”</blockquote>
+        <blockquote>“Every detail feels considered, never overworked.”</blockquote>
+        <blockquote>“We came for one glass and stayed through dessert.”</blockquote>
+        <blockquote>“Warm, assured cooking in the loveliest room.”</blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="moments-section" aria-labelledby="moments-title">
+    <div class="site-shell moments-heading">
+      <p class="eyebrow">Small moments</p>
+      <h2 id="moments-title" class="strip-title">A study in warmth and texture</h2>
+    </div>
+    <div class="strip-viewport" aria-label="Restaurant material details">
+      <div class="moments-track">
+        {{ framed_image(
+          'img/texture-pendant.png',
+          'Close detail of softly glowing copper pendant lights',
+          'moment-frame moment-frame--wide',
+          'moment-image',
+          'lazy',
+          (480, 960),
+          '49vw',
+          1672,
+          941
+        ) }}
+        {{ framed_image(
+          'img/texture-carpet.png',
+          'Close detail of a woven burgundy and cream carpet pattern',
+          'moment-frame moment-frame--compact',
+          'moment-image',
+          'lazy',
+          (480, 960),
+          '38vw',
+          1672,
+          941
+        ) }}
+        {{ framed_image(
+          'img/texture-pendant.png',
+          '',
+          'moment-frame moment-frame--narrow',
+          'moment-image moment-image--alternate',
+          'lazy',
+          (480, 960),
+          '30vw',
+          1672,
+          941
+        ) }}
+      </div>
+    </div>
+  </section>
+
+  <section id="menu" class="menu-transition-section" aria-labelledby="menu-title">
+    <div class="site-shell menu-transition-grid">
+      <div class="menu-transition-copy" data-menu-intro>
+        <p class="eyebrow">From the kitchen</p>
+        <h2 id="menu-title" class="section-title">The evening,<br>course by course.</h2>
+        <p class="section-lede">
+          Turn each card to discover its ingredients, price, and a thoughtful pairing from
+          the cellar. The menu follows what is best at the market now.
+        </p>
+      </div>
+
+      <div class="menu-courses" aria-label="Seasonal menu">
+        <p id="menu-card-instructions" class="sr-only">
+          Press a dish card to turn it over. The pressed state means its ingredients,
+          price, pairing, and image are shown.
+        </p>
+        {% for course in menu['courses'] %}
+          <section class="menu-course" aria-labelledby="course-{{ loop.index }}">
+            <div class="menu-course__heading">
+              <p>0{{ loop.index }}</p>
+              <h3 id="course-{{ loop.index }}">{{ course['name'] }}</h3>
+            </div>
+            <div class="menu-preview-grid">
+              {% for item in course['items'] %}
+                <button
+                  class="menu-preview-card"
+                  type="button"
+                  data-menu-card
+                  data-flip-card
+                  aria-pressed="false"
+                  aria-describedby="menu-card-instructions"
+                >
+                  <span class="menu-preview-card__inner" data-menu-card-inner>
+                    <span class="menu-preview-card__face menu-preview-card__front">
+                      <span class="menu-preview-card__course">{{ course['name'] }}</span>
+                      <span class="menu-preview-card__title">{{ item.name }}</span>
+                      <span class="menu-preview-card__description">{{ item.description }}</span>
+                    </span>
+                    <span class="menu-preview-card__face menu-preview-card__back">
+                      <span class="menu-preview-card__image">
+                        {% set item_stem = item.image.rsplit('.', 1)[0] %}
+                        <picture>
+                          <source
+                            type="image/webp"
+                            srcset="{{ url_for('static', filename=item_stem ~ '-320.webp') }} 320w, {{ url_for('static', filename=item_stem ~ '-500.webp') }} 500w"
+                            sizes="(min-width: 768px) 40vw, calc(100vw - 3rem)"
+                          >
+                          <img
+                            src="{{ url_for('static', filename=item.image) }}"
+                            alt="{{ item.image_alt }}"
+                            loading="lazy"
+                            decoding="async"
+                            fetchpriority="low"
+                            width="{{ item.image_width }}"
+                            height="{{ item.image_height }}"
+                          >
+                        </picture>
+                      </span>
+                      <span class="menu-preview-card__back-content">
+                        <span class="menu-preview-card__price">₹{{ item.price }}</span>
+                        <span class="menu-preview-card__ingredients">{{ item.ingredients | join(' · ') }}</span>
+                        <span class="menu-preview-card__pairing">Pairs well with — {{ item.pairing }}</span>
+                      </span>
+                    </span>
+                  </span>
+                </button>
+              {% endfor %}
+            </div>
+          </section>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section id="philosophy" class="philosophy-section" aria-labelledby="philosophy-title">
+    <div class="philosophy-panel" data-philosophy-panel>
+      <div class="site-shell philosophy-content" data-philosophy-content>
+        <p class="eyebrow eyebrow--light">Our philosophy</p>
+        <h2 id="philosophy-title">Seasonality is<br>not a flourish.<br>It is the rhythm.</h2>
+        <p>
+          We cook with what is at its best, treat it with restraint, and let hospitality
+          do the rest. Fewer gestures, made with greater attention.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="reserve" class="reservation-transition-section" aria-labelledby="reserve-title">
+    <div class="reservation-transition-cover" data-reservation-cover aria-hidden="true"></div>
+    <div class="site-shell reservation-transition-content reservation-layout" data-reservation-content>
+      <div class="reservation-copy">
+        <p class="eyebrow">Reservations</p>
+        <h2 id="reserve-title">Make an evening<br>of it.</h2>
+        <p>
+          Choose a date, a time, and the number at your table. Availability shown here is a
+          considered portfolio simulation rather than a live restaurant booking feed.
+        </p>
+      </div>
+
+      <div class="reservation-widget" data-reservation-widget>
+        <script id="availability-data" type="application/json">{{ availability | tojson }}</script>
+        <div class="reservation-widget__header">
+          <div>
+            <p class="reservation-widget__step">01 / Date</p>
+            <h3 data-month-label>September 2026</h3>
+          </div>
+          <div class="calendar-controls">
+            <button type="button" data-calendar-previous aria-label="Previous month">&larr;</button>
+            <button type="button" data-calendar-next aria-label="Next month">&rarr;</button>
+          </div>
+        </div>
+
+        <div class="calendar-scroller">
+          <div class="calendar-weekdays" aria-hidden="true">
+            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+          <div class="calendar-grid" data-calendar-grid role="group" aria-label="Choose a reservation date"></div>
+        </div>
+
+        <div class="reservation-widget__selection">
+          <div>
+            <p class="reservation-widget__step">02 / Time</p>
+            <p class="selected-date" data-selected-date>Select a date to see times</p>
+          </div>
+          <div class="time-slots" data-time-slots role="group" aria-label="Available reservation times"></div>
+        </div>
+
+        <label class="field-label" for="reservation-party-size">Party size</label>
+        <select id="reservation-party-size" class="form-control" data-party-size>
+          <option value="2">2 guests</option>
+          <option value="3">3 guests</option>
+          <option value="4">4 guests</option>
+          <option value="5">5 guests</option>
+          <option value="6">6 guests</option>
+          <option value="7">7 guests</option>
+          <option value="8">8 guests</option>
+        </select>
+
+        <button class="reservation-confirm" type="button" data-reservation-confirm disabled>
+          Hold this table
+        </button>
+        <p class="form-status" data-reservation-status aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="visit" class="visit-section" aria-labelledby="visit-title">
+    <div class="site-shell visit-grid">
+      <div>
+        <p class="eyebrow eyebrow--light">Visit</p>
+        <h2 id="visit-title" class="visit-title">Your table<br>is waiting.</h2>
+      </div>
+      <div class="visit-details">
+        <div>
+          <h3>Find us</h3>
+          <address>
+            12 Garden Lane, Richmond Town<br>
+            Bengaluru 560025
+          </address>
+          <p>Opposite the old bandstand. Valet parking is available after 6 pm.</p>
+        </div>
+        <div>
+          <h3>Opening hours</h3>
+          <p>Tuesday–Sunday<br>Lunch 12–3 pm<br>Dinner 6–11 pm</p>
+        </div>
+        {{ trace_cta('mailto:tables@thebower.example', 'Ask about a table', 'light') }}
+      </div>
+    </div>
+  </section>
+{% endblock %}

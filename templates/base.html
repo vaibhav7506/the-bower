@@ -1,0 +1,159 @@
+<!doctype html>
+{% from "macros/brand.html" import logo_mark %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#20392a">
+    <meta name="description" content="The Bower — a quiet, seasonal dining room.">
+    <meta name="application-name" content="The Bower">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:site_name" content="The Bower">
+    <meta property="og:title" content="The Bower — A quiet table, made memorable">
+    <meta property="og:description" content="Seasonal plates, generous hospitality, and a room designed for lingering in Bengaluru.">
+    <meta property="og:url" content="{{ public_base_url }}/">
+    <meta property="og:image" content="{{ public_base_url }}/static/img/og-bower.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="The Bower dining room and brass monogram">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Bower — A quiet table, made memorable">
+    <meta name="twitter:description" content="Seasonal plates, generous hospitality, and a room designed for lingering in Bengaluru.">
+    <meta name="twitter:image" content="{{ public_base_url }}/static/img/og-bower.jpg">
+    <link rel="canonical" href="{{ public_base_url }}/">
+    <title>{% block title %}The Bower{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link
+      rel="preload"
+      as="image"
+      href="{{ url_for('static', filename='img/hero-graded-960.webp') }}"
+      imagesrcset="{{ url_for('static', filename='img/hero-graded-480.webp') }} 480w, {{ url_for('static', filename='img/hero-graded-960.webp') }} 960w, {{ url_for('static', filename='img/hero-graded-1600.webp') }} 1600w"
+      imagesizes="(min-width: 1024px) 58vw, calc(100vw - 2rem)"
+      type="image/webp"
+      fetchpriority="high"
+    >
+    <script type="application/ld+json">{{ restaurant_schema | tojson }}</script>
+    <script>
+      try {
+        if (sessionStorage.getItem("bower_loader_seen") === "seen") {
+          document.documentElement.classList.add("bower-loader-seen");
+        }
+      } catch (_error) {}
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css', v=asset_version) }}">
+    <noscript><style>.preloader { display: none !important; }</style></noscript>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div
+      class="preloader"
+      data-preloader
+      aria-hidden="true"
+    >
+      <div class="preloader__rail" data-loader-rail></div>
+      <div class="preloader__brand">
+        {{ logo_mark('logo-mark--preloader') }}
+        <span>The Bower</span>
+        <p class="preloader__copy" data-loader-copy>Lighting the candles.</p>
+      </div>
+    </div>
+    <p class="sr-only" data-loader-announcement aria-live="polite"></p>
+
+    <div class="site-cursor" data-cursor aria-hidden="true">
+      <div class="site-cursor__disc"><span>View</span></div>
+    </div>
+
+    <div class="scroll-progress" aria-hidden="true">
+      <span class="scroll-progress__fill" data-scroll-progress></span>
+    </div>
+
+    <a class="sticky-reserve" href="{{ url_for('home') }}#reserve" data-sticky-reserve>Reserve a Table</a>
+
+    <header class="border-b border-brass/35" aria-label="Site header">
+      <nav class="site-shell flex min-h-20 items-center justify-between gap-6" aria-label="Primary navigation">
+        <a class="brand-lockup shrink-0" href="{{ url_for('home') }}" aria-label="The Bower home">
+          {{ logo_mark('logo-mark--nav') }}
+          <span class="brand-mark">The Bower</span>
+        </a>
+        <div class="flex items-center gap-5 sm:gap-8">
+          <a class="nav-link hidden sm:inline-flex" href="{{ url_for('home') }}#story">Story</a>
+          <a class="nav-link" href="{{ url_for('home') }}#menu">Menu</a>
+          <a class="nav-link" href="{{ url_for('home') }}#visit">Visit</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-shell footer-grid">
+        <div class="footer-signoff">
+          <p class="brand-mark">The Bower</p>
+          <p class="font-display italic text-bottle-green">Seasonal, considered, gathered.</p>
+          <button class="footer-link" type="button" data-open-events>Private Dining &amp; Events</button>
+        </div>
+
+        <form class="newsletter-form" data-newsletter-form novalidate>
+          <label for="newsletter-email">For seasonal menus and events</label>
+          <div class="newsletter-form__row">
+            <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="Email address" required>
+            <button type="submit">Join</button>
+          </div>
+          <p class="form-status" data-newsletter-status aria-live="polite"></p>
+        </form>
+
+        <p class="footer-copyright">&copy; 2026 The Bower</p>
+      </div>
+    </footer>
+
+    <dialog class="event-dialog" data-event-dialog aria-labelledby="event-dialog-title">
+      <form class="event-form" data-event-form novalidate>
+        <div class="event-form__heading">
+          <div>
+            <p class="eyebrow">Private dining</p>
+            <h2 id="event-dialog-title">Gather beautifully.</h2>
+          </div>
+          <button class="dialog-close" type="button" data-close-events aria-label="Close private events form">&times;</button>
+        </div>
+        <p class="event-form__intro">Tell us a little about the occasion. We’ll shape the room and menu around it.</p>
+
+        <div class="event-form__grid">
+          <label>
+            <span>Name</span>
+            <input class="form-control" name="name" autocomplete="name" required maxlength="120">
+          </label>
+          <label>
+            <span>Email</span>
+            <input class="form-control" name="email" type="email" autocomplete="email" required maxlength="254">
+          </label>
+          <label>
+            <span>Preferred date</span>
+            <input class="form-control" name="event_date" type="date" required>
+          </label>
+          <label>
+            <span>Party size</span>
+            <input class="form-control" name="party_size" type="number" min="1" max="200" required>
+          </label>
+          <label class="event-form__message">
+            <span>A short note</span>
+            <textarea class="form-control" name="message" rows="4" required maxlength="2000"></textarea>
+          </label>
+        </div>
+
+        <button class="reservation-confirm" type="submit">Send inquiry</button>
+        <p class="form-status" data-event-status aria-live="polite"></p>
+      </form>
+    </dialog>
+    <script src="{{ url_for('static', filename='js/loader.js', v=asset_version) }}" defer></script>
+    <script src="{{ url_for('static', filename='js/site.js', v=asset_version) }}" defer></script>
+    <script
+      src="{{ url_for('static', filename='js/bootstrap.js', v=asset_version) }}"
+      data-asset-version="{{ asset_version }}"
+      defer
+    ></script>
+  </body>
+</html>
