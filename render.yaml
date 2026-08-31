@@ -2,7 +2,7 @@ services:
   - type: web
     name: the-bower
     runtime: python
-    plan: 0.5c-512mb
+    plan: free
     buildCommand: pip install -r requirements.txt && npm ci && npm run build
     startCommand: gunicorn --workers 2 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT app:app
     healthCheckPath: /
@@ -12,8 +12,4 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_PATH
-        value: /var/data/the_bower.db
-    disk:
-      name: bower-data
-      mountPath: /var/data
-      sizeGB: 1
+        value: /tmp/the_bower.db

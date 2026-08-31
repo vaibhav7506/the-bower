@@ -14,9 +14,11 @@ Visit `http://127.0.0.1:5000`.
 
 ## Production
 
-`render.yaml` is the deployment blueprint. It installs both dependency sets, runs the
-full asset build, and serves Flask with Gunicorn. The SQLite database is mounted at
-`/var/data/the_bower.db`; this requires a Render plan that supports a persistent disk.
+`render.yaml` is the free-tier deployment blueprint. It installs both dependency sets,
+runs the full asset build, and serves Flask with Gunicorn. SQLite is stored at
+`/tmp/the_bower.db`, so form submissions are temporary and can disappear whenever the
+free service restarts or redeploys. For persistent production data, upgrade to a plan
+with a persistent disk or connect the app to a managed database.
 
 Set `PUBLIC_BASE_URL` to the canonical HTTPS origin when deploying somewhere other
 than Render. Render supplies `RENDER_EXTERNAL_URL` automatically. Set a strong
