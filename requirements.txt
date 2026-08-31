@@ -1,0 +1,5 @@
+Flask>=3.1,<4
+Flask-Compress>=1.17,<2
+gunicorn>=23,<24
+Pillow>=11,<12
+PyYAML>=6.0,<7
