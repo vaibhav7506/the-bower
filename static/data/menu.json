@@ -1,0 +1,114 @@
+{
+  "restaurant": "The Bower",
+  "currency": "INR",
+  "courses": [
+    {
+      "name": "To Begin",
+      "items": [
+        {
+          "name": "Garden Pea Velouté",
+          "description": "Chilled English peas, mint oil, cultured cream.",
+          "image": "img/menu/garden-pea-veloute.png",
+          "image_alt": "A colourful dish being finished in a chef's pan",
+          "image_width": 500,
+          "image_height": 375,
+          "price": 480,
+          "ingredients": ["English pea", "mint", "cultured cream", "lemon"],
+          "pairing": "Brut nature sparkling wine"
+        },
+        {
+          "name": "Ember-Roasted Beetroot",
+          "description": "Whipped goat's curd, toasted walnut, aged balsamic.",
+          "image": "img/menu/ember-roasted-beetroot.png",
+          "image_alt": "A chef placing herbs on a carefully plated dish",
+          "image_width": 500,
+          "image_height": 333,
+          "price": 520,
+          "ingredients": ["beetroot", "goat's curd", "walnut", "balsamic"],
+          "pairing": "Dry Chenin Blanc"
+        }
+      ]
+    },
+    {
+      "name": "From the Hearth",
+      "items": [
+        {
+          "name": "Hand-Rolled Ricotta Gnudi",
+          "description": "Brown butter, sage, roasted squash, pecorino.",
+          "image": "img/menu/ricotta-gnudi.png",
+          "image_alt": "A warmly lit table of generously filled plates",
+          "image_width": 500,
+          "image_height": 500,
+          "price": 760,
+          "ingredients": ["ricotta", "sage", "squash", "pecorino"],
+          "pairing": "Lightly chilled Pinot Noir"
+        },
+        {
+          "name": "Charred Cauliflower",
+          "description": "Cashew cream, preserved lemon, coriander seed.",
+          "image": "img/menu/charred-cauliflower.png",
+          "image_alt": "A large platter of grilled vegetables and seasonal produce",
+          "image_width": 500,
+          "image_height": 281,
+          "price": 690,
+          "ingredients": ["cauliflower", "cashew", "preserved lemon", "coriander"],
+          "pairing": "Skin-contact Sauvignon Blanc"
+        }
+      ]
+    },
+    {
+      "name": "The Main Table",
+      "items": [
+        {
+          "name": "Market Fish",
+          "description": "Fennel, braised greens, smoked mussel butter.",
+          "image": "img/menu/market-fish.png",
+          "image_alt": "A guest photographing a plated main course from above",
+          "image_width": 500,
+          "image_height": 333,
+          "price": 1180,
+          "ingredients": ["seasonal fish", "fennel", "greens", "mussel butter"],
+          "pairing": "Mineral-driven Chardonnay"
+        },
+        {
+          "name": "Slow-Cooked Lamb Shoulder",
+          "description": "Black garlic jus, spring onion, crisp potatoes.",
+          "image": "img/menu/lamb-shoulder.png",
+          "image_alt": "A glossy slow-cooked main course with herbs and citrus",
+          "image_width": 500,
+          "image_height": 333,
+          "price": 1280,
+          "ingredients": ["lamb", "black garlic", "spring onion", "potato"],
+          "pairing": "Syrah from the northern Rhône"
+        }
+      ]
+    },
+    {
+      "name": "A Little Sweetness",
+      "items": [
+        {
+          "name": "Dark Chocolate Crémeux",
+          "description": "Cocoa nib, olive oil, sea salt.",
+          "image": "img/menu/dark-chocolate-cremeux.png",
+          "image_alt": "An overhead restaurant table filled with richly coloured plates",
+          "image_width": 500,
+          "image_height": 750,
+          "price": 460,
+          "ingredients": ["70% dark chocolate", "cocoa nib", "olive oil", "sea salt"],
+          "pairing": "Pedro Ximénez sherry"
+        },
+        {
+          "name": "Poached Pear",
+          "description": "Almond cake, vanilla labneh, mulled wine syrup.",
+          "image": "img/menu/poached-pear.png",
+          "image_alt": "A dark plate arranged with grilled food and bright vegetables",
+          "image_width": 500,
+          "image_height": 333,
+          "price": 440,
+          "ingredients": ["pear", "almond", "labneh", "spice"],
+          "pairing": "Late-harvest Riesling"
+        }
+      ]
+    }
+  ]
+}

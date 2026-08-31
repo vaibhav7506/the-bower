@@ -1,0 +1,52 @@
+timezone: Asia/Kolkata
+closed_weekdays:
+  - 1
+default_slots:
+  - time: "18:00"
+    label: "6:00 pm"
+    state: available
+  - time: "18:30"
+    label: "6:30 pm"
+    state: limited
+  - time: "19:30"
+    label: "7:30 pm"
+    state: available
+  - time: "20:00"
+    label: "8:00 pm"
+    state: full
+  - time: "20:30"
+    label: "8:30 pm"
+    state: limited
+  - time: "21:30"
+    label: "9:30 pm"
+    state: available
+overrides:
+  "2026-09-05":
+    - time: "18:00"
+      label: "6:00 pm"
+      state: limited
+    - time: "18:30"
+      label: "6:30 pm"
+      state: full
+    - time: "19:30"
+      label: "7:30 pm"
+      state: full
+    - time: "20:30"
+      label: "8:30 pm"
+      state: limited
+    - time: "21:30"
+      label: "9:30 pm"
+      state: available
+  "2026-09-06":
+    - time: "18:00"
+      label: "6:00 pm"
+      state: available
+    - time: "19:00"
+      label: "7:00 pm"
+      state: available
+    - time: "20:00"
+      label: "8:00 pm"
+      state: limited
+    - time: "21:00"
+      label: "9:00 pm"
+      state: available
