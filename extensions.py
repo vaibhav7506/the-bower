@@ -3,6 +3,7 @@ from __future__ import annotations
 import sqlite3
 
 from flask_migrate import Migrate
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -15,6 +16,9 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate(compare_type=True, render_as_batch=True)
+login_manager = LoginManager()
+login_manager.login_view = "admin.login"
+login_manager.login_message = "Sign in to continue to the dining room desk."
 
 
 @event.listens_for(Engine, "connect")

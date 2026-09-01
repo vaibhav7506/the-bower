@@ -44,6 +44,7 @@ def test_domain_schema_and_seed_data(database) -> None:
         "reservations",
         "restaurants",
         "special_closures",
+        "users",
     }
 
     assert expected_tables.issubset(set(inspect(database).get_table_names()))
@@ -136,6 +137,7 @@ def test_alembic_upgrade_creates_fresh_schema(tmp_path) -> None:
     try:
         assert "alembic_version" in inspect(engine).get_table_names()
         assert "reservation_events" in inspect(engine).get_table_names()
+        assert "users" in inspect(engine).get_table_names()
         with Session(engine) as session:
             assert len(session.scalars(select(Restaurant)).all()) == 1
             assert len(session.scalars(select(DiningTable)).all()) == 8

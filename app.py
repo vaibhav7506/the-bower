@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import click
 from datetime import date
 from pathlib import Path
 
@@ -13,10 +14,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from config import Config, sqlite_uri
-from extensions import db, migrate
-from models import NewsletterSubscriber, PrivateEventInquiry
+from extensions import db, login_manager, migrate
+from models import NewsletterSubscriber, PrivateEventInquiry, User, UserRole
 from models.seed import seed_restaurant_domain
-from routes import reservation_api
+from routes import admin, reservation_api
 
 
 PROJECT_ROOT = Path(__file__).parent
@@ -50,13 +51,54 @@ def create_app(test_config: dict[str, object] | None = None) -> Flask:
 
     db.init_app(app)
     migrate.init_app(app, db)
+    login_manager.init_app(app)
     Compress(app)
     app.register_blueprint(reservation_api)
+    app.register_blueprint(admin)
+
+    @login_manager.user_loader
+    def load_user(user_id: str):
+        return db.session.get(User, int(user_id)) if user_id.isdigit() else None
 
     @app.cli.command("seed-domain")
     def seed_domain_command() -> None:
         seed_restaurant_domain(db.session)
+        bootstrap_email = os.environ.get("ADMIN_BOOTSTRAP_EMAIL", "").strip().lower()
+        bootstrap_password = os.environ.get("ADMIN_BOOTSTRAP_PASSWORD", "")
+        if bootstrap_email and bootstrap_password:
+            existing_admin = db.session.scalar(select(User).where(User.email == bootstrap_email))
+            if existing_admin is None:
+                user = User(
+                    name=os.environ.get("ADMIN_BOOTSTRAP_NAME", "Restaurant Admin").strip(),
+                    email=bootstrap_email,
+                    role=UserRole.ADMIN,
+                )
+                try:
+                    user.set_password(bootstrap_password)
+                except ValueError as error:
+                    raise click.ClickException(str(error)) from error
+                db.session.add(user)
+                db.session.commit()
+                click.echo(f"Bootstrapped admin account for {bootstrap_email}.")
         print("The Bower restaurant domain is ready.")
+
+    @app.cli.command("create-admin")
+    @click.option("--email", prompt=True)
+    @click.option("--name", prompt=True)
+    @click.password_option(confirmation_prompt=True)
+    def create_admin_command(email: str, name: str, password: str) -> None:
+        normalized_email = email.strip().lower()
+        existing = db.session.scalar(select(User).where(User.email == normalized_email))
+        if existing is not None:
+            raise click.ClickException("An account with that email already exists.")
+        user = User(name=name.strip(), email=normalized_email, role=UserRole.ADMIN)
+        try:
+            user.set_password(password)
+        except ValueError as error:
+            raise click.ClickException(str(error)) from error
+        db.session.add(user)
+        db.session.commit()
+        click.echo(f"Admin account created for {normalized_email}.")
 
     @app.context_processor
     def site_metadata() -> dict[str, object]:

@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ reservation.confirmation_code }}{% endblock %}
+{% block content %}
+  <p><a href="{{ url_for('admin.dashboard') }}">← Reservation book</a></p>
+  <div class="admin-page-heading"><div><p class="admin-kicker">{{ reservation.confirmation_code }}</p><h1>{{ reservation.customer_name }}</h1></div><span class="admin-status">{{ reservation.status.value.replace('_', ' ') }}</span></div>
+  <div class="admin-detail-grid">
+    <section class="admin-panel"><h2>Booking details</h2>
+      <dl class="admin-definition"><div><dt>When</dt><dd>{{ reservation.starts_at.replace(tzinfo=timezone.utc).astimezone(local_timezone).strftime('%A, %d %B · %I:%M %p') if reservation.starts_at.tzinfo is none else reservation.starts_at.astimezone(local_timezone).strftime('%A, %d %B · %I:%M %p') }}</dd></div><div><dt>Party</dt><dd>{{ reservation.party_size }} guests</dd></div><div><dt>Email</dt><dd>{{ reservation.email }}</dd></div></dl>
+      <form method="post" action="{{ url_for('admin.edit_reservation', confirmation_code=reservation.confirmation_code) }}" class="admin-form admin-form--grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Guest name<input name="customer_name" value="{{ reservation.customer_name }}" required></label>
+        <label>Phone<input name="phone" value="{{ reservation.phone or '' }}"></label>
+        <label>Table<select name="table_id">{% for table in tables %}<option value="{{ table.id }}" {% if table.id == reservation.dining_table_id %}selected{% endif %}>{{ table.display_name }} · {{ table.capacity }}</option>{% endfor %}</select></label>
+        <label class="admin-span">Special requests<textarea name="special_requests" rows="4">{{ reservation.special_requests or '' }}</textarea></label>
+        <button type="submit">Save details</button>
+      </form>
+      {% if allowed_statuses %}<div class="admin-actions">{% for status in allowed_statuses %}<form method="post" action="{{ url_for('admin.reservation_status', confirmation_code=reservation.confirmation_code) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="{{ status.value }}"><button type="submit">Mark {{ status.value.replace('_', ' ').lower() }}</button></form>{% endfor %}</div>{% endif %}
+    </section>
+    <section class="admin-panel"><h2>Event history</h2><ol class="admin-timeline">{% for event in reservation.events|reverse %}<li><strong>{{ event.event_type.value.replace('_', ' ') }}</strong><span>{{ event.actor_type.value }}{% if event.actor_reference %} · {{ event.actor_reference }}{% endif %}</span><time>{{ event.occurred_at.strftime('%d %b %Y · %H:%M') }}</time></li>{% endfor %}</ol></section>
+  </div>
+{% endblock %}

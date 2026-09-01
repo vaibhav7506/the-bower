@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% block title %}Reservations{% endblock %}
+{% block content %}
+  <div class="admin-page-heading">
+    <div><p class="admin-kicker">Service overview</p><h1>{{ selected_date.strftime('%A, %d %B') }}</h1></div>
+    <form method="get" class="admin-filter">
+      <label>Date<input type="date" name="date" value="{{ selected_date.isoformat() }}"></label>
+      <label>Search<input name="q" value="{{ search_term }}" placeholder="Name, code or phone"></label>
+      <button>Find</button>
+    </form>
+  </div>
+  <div class="admin-metrics" aria-label="Service summary">
+    <div><span>Reservations</span><strong>{{ metrics.reservations }}</strong></div>
+    <div><span>Guests</span><strong>{{ metrics.guests }}</strong></div>
+    <div><span>Cancellations</span><strong>{{ metrics.cancellations }}</strong></div>
+    <div><span>No-shows</span><strong>{{ metrics.no_shows }}</strong></div>
+    <div><span>Peak occupancy</span><strong>{{ metrics.occupancy }}%</strong></div>
+  </div>
+  <section class="admin-panel" aria-labelledby="reservation-list-title">
+    <h2 id="reservation-list-title">Reservation book</h2>
+    {% if reservations %}
+      <div class="admin-table-wrap"><table><thead><tr><th>Time</th><th>Guest</th><th>Party</th><th>Table</th><th>Status</th><th></th></tr></thead>
+      <tbody>{% for reservation in reservations %}<tr>
+        <td>{{ reservation.starts_at.replace(tzinfo=timezone.utc).astimezone(local_timezone).strftime('%I:%M %p') if reservation.starts_at.tzinfo is none else reservation.starts_at.astimezone(local_timezone).strftime('%I:%M %p') }}</td>
+        <td><strong>{{ reservation.customer_name }}</strong><small>{{ reservation.confirmation_code }}</small></td>
+        <td>{{ reservation.party_size }}</td><td>{{ reservation.table.display_name if reservation.table else 'Unassigned' }}</td>
+        <td><span class="admin-status">{{ reservation.status.value.replace('_', ' ') }}</span></td>
+        <td><a href="{{ url_for('admin.reservation_detail', confirmation_code=reservation.confirmation_code) }}">Open</a></td>
+      </tr>{% endfor %}</tbody></table></div>
+    {% else %}<p class="admin-empty">No reservations match this service view.</p>{% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>{% block title %}Dining Room Desk{% endblock %} · The Bower</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  </head>
+  <body>
+    <a class="admin-skip" href="#admin-main">Skip to operations</a>
+    <header class="admin-header">
+      <a href="{{ url_for('admin.dashboard') }}" class="admin-brand">The Bower <span>Dining Room Desk</span></a>
+      {% if current_user.is_authenticated %}
+        <nav aria-label="Admin navigation">
+          <a href="{{ url_for('admin.dashboard') }}">Reservations</a>
+          {% if current_user.is_admin %}
+            <a href="{{ url_for('admin.tables') }}">Tables</a>
+            <a href="{{ url_for('admin.hours') }}">Hours</a>
+            <a href="{{ url_for('admin.closures') }}">Closures</a>
+            <a href="{{ url_for('admin.staff') }}">Staff</a>
+          {% endif %}
+        </nav>
+        <form action="{{ url_for('admin.logout') }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="admin-link-button" type="submit">Sign out</button>
+        </form>
+      {% endif %}
+    </header>
+    <main id="admin-main" class="admin-shell" tabindex="-1">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div aria-live="polite">
+            {% for category, message in messages %}<p class="admin-flash" data-state="{{ category }}">{{ message }}</p>{% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

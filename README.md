@@ -56,6 +56,27 @@ requests cannot both confirm the same table. SQLite serializes booking writes wi
 `BEGIN IMMEDIATE`; databases with row locking use `SELECT ... FOR UPDATE`. Cancellation
 requires the booking email, is idempotent, and releases the interval claims.
 
+## Admin operations
+
+The staff desk is available at `/admin`. Accounts use scrypt password hashes,
+expiring server-signed sessions, production-only Secure cookies, HttpOnly and
+SameSite cookie settings, CSRF tokens on every state-changing form, and a temporary
+lock after five failed sign-in attempts. STAFF accounts can manage reservation
+details and lifecycle states. ADMIN accounts can additionally manage dining tables,
+opening periods, closures, and staff access.
+
+Create the first local administrator interactively:
+
+```text
+flask --app app create-admin
+```
+
+For a non-interactive deployment, set `ADMIN_BOOTSTRAP_EMAIL` and a secret
+`ADMIN_BOOTSTRAP_PASSWORD` of at least 12 characters. The existing `seed-domain`
+startup command creates the account only when that email does not already exist;
+plaintext credentials are never stored. Remove the bootstrap password from the
+environment after the account has been created on persistent infrastructure.
+
 The image build is deterministic and safe to rerun. Source PNG files remain in place;
 generated WebP variants and `static/img/og-bower.jpg` are deployment assets.
 

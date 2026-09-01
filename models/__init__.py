@@ -6,6 +6,7 @@ from .reservation import Reservation, ReservationStatus
 from .reservation_event import ActorType, ReservationEvent, ReservationEventType
 from .reservation_time_block import ReservationTimeBlock
 from .restaurant import Restaurant
+from .user import User, UserRole
 
 __all__ = [
     "ActorType",
@@ -23,4 +24,6 @@ __all__ = [
     "SpecialClosure",
     "TableSection",
     "TableShape",
+    "User",
+    "UserRole",
 ]

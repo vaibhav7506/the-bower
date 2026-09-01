@@ -1,0 +1,1 @@
+{% extends "admin/base.html" %}{% block title %}Unable to continue{% endblock %}{% block content %}<section class="admin-login"><p class="admin-kicker">{{ status }}</p><h1>Unable to continue.</h1><p>{{ message }}</p><p><a href="{{ url_for('admin.dashboard') }}">Return to the dining room desk</a></p></section>{% endblock %}

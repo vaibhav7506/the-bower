@@ -36,6 +36,12 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     RESERVATION_BOOKING_HORIZON_DAYS = 90
     RESERVATION_MINIMUM_NOTICE_MINUTES = 30
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production" or bool(
+        os.environ.get("RENDER")
+    )
     PUBLIC_BASE_URL = (
         os.environ.get("PUBLIC_BASE_URL")
         or os.environ.get("RENDER_EXTERNAL_URL")
