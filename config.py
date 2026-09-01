@@ -34,6 +34,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
+    RESERVATION_BOOKING_HORIZON_DAYS = 90
+    RESERVATION_MINIMUM_NOTICE_MINUTES = 30
     PUBLIC_BASE_URL = (
         os.environ.get("PUBLIC_BASE_URL")
         or os.environ.get("RENDER_EXTERNAL_URL")

@@ -37,11 +37,24 @@ The reservation domain is modeled with SQLAlchemy and versioned through Alembic.
 `flask --app app db migrate -m "description"` after deliberate model changes, review
 the generated migration, then apply it with `flask --app app db upgrade`.
 
-`services/availability.py` owns the booking rules used by future API routes. Its
+`services/availability.py` owns the booking rules used by the reservation API. Its
 defaults are centralized in `AvailabilitySettings`: 15-minute slot intervals, a
 15-minute reset buffer, and seating durations that scale from 90 to 135 minutes by
 party size. It validates opening periods, final seating, closures, table capacity,
 active reservations, and active table state without relying on browser data.
+
+The JSON reservation endpoints are:
+
+- `GET /api/availability?date=YYYY-MM-DD&partySize=N`
+- `POST /api/reservations`
+- `GET /api/reservations/<confirmation-code>`
+- `POST /api/reservations/<confirmation-code>/cancel`
+
+Reservation creation revalidates availability inside the write transaction. Each
+occupied 15-minute interval is claimed by a unique table/time record, so simultaneous
+requests cannot both confirm the same table. SQLite serializes booking writes with
+`BEGIN IMMEDIATE`; databases with row locking use `SELECT ... FOR UPDATE`. Cancellation
+requires the booking email, is idempotent, and releases the interval claims.
 
 The image build is deterministic and safe to rerun. Source PNG files remain in place;
 generated WebP variants and `static/img/og-bower.jpg` are deployment assets.

@@ -224,13 +224,13 @@ def test_scarce_table_removes_conflicting_slot(session, availability) -> None:
 def test_settings_are_centralized_and_configurable() -> None:
     settings = AvailabilitySettings(
         duration_rules=((2, 75), (4, 90)),
-        slot_interval_minutes=30,
-        reset_buffer_minutes=20,
+        slot_interval_minutes=15,
+        reset_buffer_minutes=30,
     )
 
     assert settings.duration_for(2) == timedelta(minutes=75)
-    assert settings.slot_interval == timedelta(minutes=30)
-    assert settings.reset_buffer == timedelta(minutes=20)
+    assert settings.slot_interval == timedelta(minutes=15)
+    assert settings.reset_buffer == timedelta(minutes=30)
     with pytest.raises(UnsupportedPartySize):
         settings.duration_for(5)
     with pytest.raises(ValueError, match="Slot interval"):

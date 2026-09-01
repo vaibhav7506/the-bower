@@ -70,3 +70,8 @@ class Reservation(TimestampMixin, db.Model):
         cascade="all, delete-orphan",
         order_by="ReservationEvent.occurred_at",
     )
+    time_blocks = relationship(
+        "ReservationTimeBlock",
+        back_populates="reservation",
+        cascade="all, delete-orphan",
+    )

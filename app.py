@@ -17,6 +17,7 @@ from config import Config, sqlite_uri
 from extensions import db, migrate
 from models import NewsletterSubscriber, PrivateEventInquiry
 from models.seed import seed_restaurant_domain
+from routes import reservation_api
 
 
 PROJECT_ROOT = Path(__file__).parent
@@ -52,6 +53,7 @@ def create_app(test_config: dict[str, object] | None = None) -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
     Compress(app)
+    app.register_blueprint(reservation_api)
 
     @app.cli.command("seed-domain")
     def seed_domain_command() -> None:

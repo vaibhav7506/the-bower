@@ -4,6 +4,7 @@ from .marketing import NewsletterSubscriber, PrivateEventInquiry
 from .opening_hours import OpeningHours, SpecialClosure
 from .reservation import Reservation, ReservationStatus
 from .reservation_event import ActorType, ReservationEvent, ReservationEventType
+from .reservation_time_block import ReservationTimeBlock
 from .restaurant import Restaurant
 
 __all__ = [
@@ -17,6 +18,7 @@ __all__ = [
     "ReservationEvent",
     "ReservationEventType",
     "ReservationStatus",
+    "ReservationTimeBlock",
     "Restaurant",
     "SpecialClosure",
     "TableSection",

@@ -51,6 +51,13 @@ class AvailabilitySettings:
             raise ValueError("Slot interval must be positive.")
         if self.reset_buffer_minutes < 0:
             raise ValueError("Reset buffer cannot be negative.")
+        if any(
+            minutes % self.slot_interval_minutes != 0
+            for _limit, minutes in self.duration_rules
+        ):
+            raise ValueError("Seating durations must align with the slot interval.")
+        if self.reset_buffer_minutes % self.slot_interval_minutes != 0:
+            raise ValueError("Reset buffer must align with the slot interval.")
 
     def duration_for(self, party_size: int) -> timedelta:
         if party_size < 1:
@@ -182,18 +189,8 @@ class AvailabilityService:
         starts_at: datetime,
         party_size: int,
     ) -> tuple[DiningTable, ...]:
-        if starts_at.tzinfo is None or starts_at.utcoffset() is None:
-            raise ValueError("Reservation times must include a timezone.")
-
-        duration = self.settings.duration_for(party_size)
-        local_start = starts_at.astimezone(self.timezone)
-        local_end = local_start + duration
-        opening_periods = self._opening_periods(local_start.date())
-        if not self._fits_opening_period(local_start, local_end, opening_periods):
-            return ()
-
-        closures = self._closures(local_start.date())
-        if self._overlaps_closure(local_start, local_end, closures):
+        local_start, local_end = self.reservation_window(starts_at, party_size)
+        if local_start is None or local_end is None:
             return ()
 
         compatible_tables = self._compatible_tables(party_size)
@@ -208,6 +205,26 @@ class AvailabilityService:
             local_end,
             blocking_reservations,
         )
+
+    def reservation_window(
+        self,
+        starts_at: datetime,
+        party_size: int,
+    ) -> tuple[datetime | None, datetime | None]:
+        if starts_at.tzinfo is None or starts_at.utcoffset() is None:
+            raise ValueError("Reservation times must include a timezone.")
+
+        duration = self.settings.duration_for(party_size)
+        local_start = starts_at.astimezone(self.timezone)
+        local_end = local_start + duration
+        opening_periods = self._opening_periods(local_start.date())
+        if not self._fits_opening_period(local_start, local_end, opening_periods):
+            return None, None
+
+        closures = self._closures(local_start.date())
+        if self._overlaps_closure(local_start, local_end, closures):
+            return None, None
+        return local_start, local_end
 
     def _opening_periods(self, service_date: date) -> tuple[OpeningHours, ...]:
         statement = (
