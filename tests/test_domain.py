@@ -39,6 +39,7 @@ def test_domain_schema_and_seed_data(database) -> None:
     expected_tables = {
         "customers",
         "dining_tables",
+        "notification_jobs",
         "opening_hours",
         "reservation_events",
         "reservations",
@@ -138,6 +139,7 @@ def test_alembic_upgrade_creates_fresh_schema(tmp_path) -> None:
         assert "alembic_version" in inspect(engine).get_table_names()
         assert "reservation_events" in inspect(engine).get_table_names()
         assert "users" in inspect(engine).get_table_names()
+        assert "notification_jobs" in inspect(engine).get_table_names()
         with Session(engine) as session:
             assert len(session.scalars(select(Restaurant)).all()) == 1
             assert len(session.scalars(select(DiningTable)).all()) == 8

@@ -18,6 +18,7 @@ from extensions import db, login_manager, migrate
 from models import NewsletterSubscriber, PrivateEventInquiry, User, UserRole
 from models.seed import seed_restaurant_domain
 from routes import admin, reservation_api
+from services import NotificationService, process_due_notifications
 
 
 PROJECT_ROOT = Path(__file__).parent
@@ -48,6 +49,8 @@ def create_app(test_config: dict[str, object] | None = None) -> Flask:
     app.config.from_object(Config)
     if test_config:
         app.config.update(test_config)
+    if app.testing and (not test_config or "NOTIFICATION_AUTO_DISPATCH" not in test_config):
+        app.config["NOTIFICATION_AUTO_DISPATCH"] = False
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -55,6 +58,28 @@ def create_app(test_config: dict[str, object] | None = None) -> Flask:
     Compress(app)
     app.register_blueprint(reservation_api)
     app.register_blueprint(admin)
+
+    @app.after_request
+    def apply_security_headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=(), payment=()",
+        )
+        response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        response.headers.setdefault(
+            "Content-Security-Policy",
+            "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; "
+            "img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; "
+            "script-src 'self' 'unsafe-inline'; connect-src 'self'",
+        )
+        if request.is_secure:
+            response.headers.setdefault(
+                "Strict-Transport-Security",
+                "max-age=31536000; includeSubDomains",
+            )
+        return response
 
     @login_manager.user_loader
     def load_user(user_id: str):
@@ -99,6 +124,17 @@ def create_app(test_config: dict[str, object] | None = None) -> Flask:
         db.session.add(user)
         db.session.commit()
         click.echo(f"Admin account created for {normalized_email}.")
+
+    @app.cli.command("enqueue-reminders")
+    def enqueue_reminders_command() -> None:
+        job_ids = NotificationService(db.session).enqueue_due_reminders()
+        click.echo(f"Queued {len(job_ids)} reservation reminder(s).")
+
+    @app.cli.command("process-notifications")
+    @click.option("--limit", type=click.IntRange(1, 250), default=25, show_default=True)
+    def process_notifications_command(limit: int) -> None:
+        processed = process_due_notifications(limit)
+        click.echo(f"Processed {processed} notification job(s).")
 
     @app.context_processor
     def site_metadata() -> dict[str, object]:

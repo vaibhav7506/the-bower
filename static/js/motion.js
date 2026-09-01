@@ -72,7 +72,7 @@
 
   media.add("(min-width: 1024px)", () => {
     gsap.set(storyCurtain, { scaleY: 1, transformOrigin: "top center" });
-    gsap.set(storyContent, { y: 72, opacity: 0 });
+    gsap.set(storyContent, { y: 72 });
 
     gsap.timeline({
       defaults: { ease: "power3.inOut" },
@@ -84,9 +84,9 @@
     })
       .to(storyLine, { scaleX: 1, duration: 1 })
       .to(storyCurtain, { scaleY: 0, duration: 1.45 }, 0.72)
-      .to(storyContent, { y: 0, opacity: 1, duration: 1.15 }, 0.9);
+      .to(storyContent, { y: 0, duration: 1.15 }, 0.9);
 
-    gsap.set(menuIntro, { y: 42, opacity: 0 });
+    gsap.set(menuIntro, { y: 42 });
 
     gsap.timeline({
       defaults: { ease: "power3.out" },
@@ -102,7 +102,7 @@
         duration: 1.15,
         stagger: 0.14
       })
-      .to(menuIntro, { y: 0, opacity: 1, duration: 0.95 }, 0.58);
+      .to(menuIntro, { y: 0, duration: 0.95 }, 0.58);
 
     gsap.set(philosophyContent, { y: 48, opacity: 0 });
 

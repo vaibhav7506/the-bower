@@ -6,3 +6,6 @@ __pycache__/
 node_modules/
 .env
 instance/*.db
+.playwright/
+playwright-report/
+test-results/

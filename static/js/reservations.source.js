@@ -35,6 +35,7 @@ if (widget) {
   const successPanel = widget.querySelector("[data-reservation-success]");
   const confirmationSummary = widget.querySelector("[data-confirmation-summary]");
   const confirmationCode = widget.querySelector("[data-confirmation-code]");
+  const emailStatus = widget.querySelector("[data-email-status]");
   const status = widget.querySelector("[data-reservation-status]");
 
   const today = startOfDay(new Date());
@@ -106,6 +107,8 @@ if (widget) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "floor-table";
+      button.dataset.tableId = String(table.id);
+      button.dataset.tableName = table.name;
       button.dataset.state = state;
       button.dataset.shape = table.shape.toLowerCase();
       button.style.setProperty("--table-x", `${table.x}%`);
@@ -162,6 +165,7 @@ if (widget) {
 
       button.type = "button";
       button.className = "time-slot";
+      button.dataset.time = slot.time;
       button.dataset.state = limited ? "limited" : "available";
       button.setAttribute("aria-pressed", String(isSelected));
       button.setAttribute("aria-label", `${slot.label}, ${limited ? "limited availability" : "available"}`);
@@ -236,6 +240,7 @@ if (widget) {
       const unavailable = outside || isBefore(day, today) || isAfter(day, lastBookableDate);
       button.type = "button";
       button.className = "calendar-day";
+      button.dataset.date = dateKey(day);
       button.textContent = format(day, "d");
       button.disabled = unavailable;
       button.setAttribute("aria-label", format(day, "EEEE, d MMMM yyyy"));
@@ -301,7 +306,11 @@ if (widget) {
       successPanel.hidden = false;
       confirmationCode.textContent = result.reservation.confirmationCode;
       confirmationSummary.textContent = `${format(selectedDate, "EEEE, d MMMM")} at ${selectedSlot.label} for ${partySize.value} guests.`;
-      announce("Reservation successfully confirmed.", "success");
+      emailStatus.textContent = result.notification?.message || "Your confirmation email is queued.";
+      emailStatus.dataset.state = result.notification?.status === "FAILED" ? "error" : "pending";
+      announce(result.notification?.status === "FAILED"
+        ? "Reservation confirmed. Email is delayed, so please keep your confirmation code."
+        : "Reservation successfully confirmed. Your email is queued.", "success");
       successPanel.focus();
     } catch (error) {
       announce(error.message || "We could not confirm the reservation. Please try again.", "error");

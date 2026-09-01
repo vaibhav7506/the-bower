@@ -127,6 +127,11 @@
       frame.addEventListener("pointerleave", () => cursor.classList.remove("is-viewing"));
     });
 
+    document.querySelectorAll('[data-cursor-theme="candle"]').forEach((section) => {
+      section.addEventListener("pointerenter", () => cursor.classList.add("is-candle"));
+      section.addEventListener("pointerleave", () => cursor.classList.remove("is-candle"));
+    });
+
     requestAnimationFrame(renderCursor);
   }
 })();

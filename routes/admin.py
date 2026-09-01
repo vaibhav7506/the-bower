@@ -223,6 +223,7 @@ def reservation_detail(confirmation_code: str):
         .options(
             selectinload(Reservation.table),
             selectinload(Reservation.events),
+            selectinload(Reservation.notification_jobs),
         )
         .where(Reservation.confirmation_code == confirmation_code.upper())
     )

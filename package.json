@@ -7,9 +7,15 @@
     "build:css": "tailwindcss -i ./static/css/input.css -o ./static/css/site.css --minify",
     "build:js": "esbuild ./static/js/reservations.source.js --bundle --minify --format=iife --outfile=./static/js/reservations.js",
     "build": "npm run build:images && npm run build:css && npm run build:js",
-    "watch:css": "tailwindcss -i ./static/css/input.css -o ./static/css/site.css --watch"
+    "watch:css": "tailwindcss -i ./static/css/input.css -o ./static/css/site.css --watch",
+    "playwright:install": "playwright install chromium firefox webkit",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:report": "playwright show-report"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
     "esbuild": "^0.28.2",
     "tailwindcss": "^3.4.17"
   },

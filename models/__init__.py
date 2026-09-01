@@ -1,6 +1,7 @@
 from .customer import Customer
 from .dining_table import DiningTable, TableSection, TableShape
 from .marketing import NewsletterSubscriber, PrivateEventInquiry
+from .notification_job import NotificationJob, NotificationKind, NotificationStatus
 from .opening_hours import OpeningHours, SpecialClosure
 from .reservation import Reservation, ReservationStatus
 from .reservation_event import ActorType, ReservationEvent, ReservationEventType
@@ -13,6 +14,9 @@ __all__ = [
     "Customer",
     "DiningTable",
     "NewsletterSubscriber",
+    "NotificationJob",
+    "NotificationKind",
+    "NotificationStatus",
     "OpeningHours",
     "PrivateEventInquiry",
     "Reservation",

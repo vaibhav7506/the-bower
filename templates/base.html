@@ -52,11 +52,15 @@
       data-preloader
       aria-hidden="true"
     >
+      <div class="preloader__panel preloader__panel--top"></div>
+      <div class="preloader__panel preloader__panel--bottom"></div>
       <div class="preloader__rail" data-loader-rail></div>
       <div class="preloader__brand">
-        {{ logo_mark('logo-mark--preloader') }}
+        <div class="preloader__seal">
+          {{ logo_mark('logo-mark--preloader') }}
+        </div>
         <span>The Bower</span>
-        <p class="preloader__copy" data-loader-copy>Lighting the candles.</p>
+        <p class="preloader__copy" data-loader-copy>An invitation for the evening.</p>
       </div>
     </div>
     <p class="sr-only" data-loader-announcement aria-live="polite"></p>

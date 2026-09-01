@@ -75,3 +75,9 @@ class Reservation(TimestampMixin, db.Model):
         back_populates="reservation",
         cascade="all, delete-orphan",
     )
+    notification_jobs = relationship(
+        "NotificationJob",
+        back_populates="reservation",
+        cascade="all, delete-orphan",
+        order_by="NotificationJob.created_at",
+    )

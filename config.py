@@ -36,6 +36,15 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     RESERVATION_BOOKING_HORIZON_DAYS = 90
     RESERVATION_MINIMUM_NOTICE_MINUTES = 30
+    NOTIFICATION_AUTO_DISPATCH = True
+    NOTIFICATION_DELIVERY_MODE = os.environ.get("NOTIFICATION_DELIVERY_MODE", "log")
+    NOTIFICATION_MAX_ATTEMPTS = 5
+    NOTIFICATION_FROM_EMAIL = os.environ.get("NOTIFICATION_FROM_EMAIL", "tables@thebower.example")
+    SMTP_HOST = os.environ.get("SMTP_HOST")
+    SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
+    SMTP_USERNAME = os.environ.get("SMTP_USERNAME")
+    SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
+    SMTP_STARTTLS = os.environ.get("SMTP_STARTTLS", "true").lower() != "false"
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"

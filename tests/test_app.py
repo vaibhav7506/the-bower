@@ -50,6 +50,9 @@ class TheBowerAppTests(unittest.TestCase):
         self.assertIn("hero-graded-480.webp 480w", page)
         self.assertIn('fetchpriority="high"', page)
         self.assertIn("data-loader-copy", page)
+        self.assertIn("preloader__seal", page)
+        self.assertEqual(page.count('class="preloader__panel '), 2)
+        self.assertIn('data-cursor-theme="candle"', page)
         self.assertIn("data-loader-announcement", page)
         self.assertIn("js/loader.js", page)
         self.assertIn("js/bootstrap.js", page)
@@ -86,6 +89,15 @@ class TheBowerAppTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers.get("Content-Encoding"), "gzip")
+
+    def test_security_headers_are_applied(self) -> None:
+        response = self.client.get("/")
+
+        self.assertEqual(response.headers["X-Content-Type-Options"], "nosniff")
+        self.assertEqual(response.headers["X-Frame-Options"], "SAMEORIGIN")
+        self.assertEqual(response.headers["Referrer-Policy"], "strict-origin-when-cross-origin")
+        self.assertIn("camera=()", response.headers["Permissions-Policy"])
+        self.assertIn("default-src 'self'", response.headers["Content-Security-Policy"])
 
     def test_newsletter_validates_and_deduplicates(self) -> None:
         invalid = self.client.post("/api/newsletter", json={"email": "not-an-email"})

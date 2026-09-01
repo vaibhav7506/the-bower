@@ -30,8 +30,21 @@ than Render. Render supplies `RENDER_EXTERNAL_URL` automatically. Set a strong
 Run the verification suite with:
 
 ```text
-pytest
+python -m pytest -q
+npm run test:e2e
 ```
+
+Install the browser binaries once with `npm run playwright:install`. The Playwright
+suite uses an isolated seeded SQLite database and covers the complete customer and
+admin lifecycle, simultaneous scarce-table contention, full automated accessibility,
+mobile layout, and Chromium/Firefox/WebKit rendering. Generated reports and traces
+stay under ignored local test directories.
+
+The Phase I desktop lab audit measured a 202 ms LCP and 0.00 CLS on the local build.
+Lighthouse scored Best Practices and SEO at 100; its contrast findings were corrected
+and are now enforced by the full axe scan. These are lab measurements, so production
+performance should still be monitored separately—especially after the free Render
+service wakes from an idle spin-down.
 
 The reservation domain is modeled with SQLAlchemy and versioned through Alembic. Run
 `flask --app app db migrate -m "description"` after deliberate model changes, review
@@ -76,6 +89,30 @@ For a non-interactive deployment, set `ADMIN_BOOTSTRAP_EMAIL` and a secret
 startup command creates the account only when that email does not already exist;
 plaintext credentials are never stored. Remove the bootstrap password from the
 environment after the account has been created on persistent infrastructure.
+
+## Notifications
+
+Booking, cancellation, and 24-hour reminder emails use a database-backed outbox.
+Reservation transactions commit before a notification job is enqueued, and delivery
+runs outside the request. Provider failures move jobs to `RETRY_PENDING` with bounded
+exponential backoff; they never roll back a confirmed reservation. The admin booking
+history shows delivery state and retry count.
+
+The default `NOTIFICATION_DELIVERY_MODE=log` is safe for local development. To send
+mail, set it to `smtp` and configure `SMTP_HOST`, `SMTP_PORT`,
+`NOTIFICATION_FROM_EMAIL`, and optional `SMTP_USERNAME` / `SMTP_PASSWORD`. Recovery
+and scheduling commands are:
+
+```text
+flask --app app enqueue-reminders
+flask --app app process-notifications --limit 25
+```
+
+The existing first-session loader is also the wax-seal invitation reveal. It is
+skipped after the first page load in a browser session and reduced to a near-immediate
+release for reduced-motion users. The existing cursor adopts its subtle candle glow
+only inside sections marked `data-cursor-theme="candle"` and remains disabled for
+touch and reduced-motion input.
 
 The image build is deterministic and safe to rerun. Source PNG files remain in place;
 generated WebP variants and `static/img/og-bower.jpg` are deployment assets.

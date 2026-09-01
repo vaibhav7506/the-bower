@@ -32,6 +32,7 @@
     --cream: #f4ede0;
     --bottle-green: #20392a;
     --brass: #a3763a;
+    --brass-ink: #76501f;
     --burgundy: #6b2632;
     --charcoal: #1a1512;
   }
@@ -368,7 +369,7 @@
 
   .section-lede {
     max-width: 38rem;
-    color: rgba(26, 21, 18, 0.66);
+    color: #625c55;
     line-height: 1.8;
   }
 
@@ -392,14 +393,14 @@
     grid-column: 9 / span 3;
     align-self: center;
     margin-top: 7rem;
-    color: rgba(26, 21, 18, 0.66);
+    color: #625c55;
     font-size: 0.9rem;
     line-height: 1.7;
   }
 
   .story-note__number {
     margin-bottom: 0.8rem;
-    color: var(--brass);
+    color: var(--brass-ink);
     font-family: "Fraunces", Georgia, serif;
     font-size: 2rem;
   }
@@ -431,7 +432,7 @@
   .story-quote span {
     display: block;
     margin-top: 1.4rem;
-    color: var(--brass);
+    color: var(--brass-ink);
     font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.16em;
@@ -586,13 +587,12 @@
     inset: 0;
     display: grid;
     place-items: center;
-    background: var(--bottle-green);
-    transform: translate3d(0, 0, 0);
-    transition: transform 420ms cubic-bezier(0.65, 0, 0.35, 1) 300ms;
+    overflow: hidden;
+    background: transparent;
   }
 
   .preloader.is-revealing {
-    transform: translate3d(0, -101%, 0);
+    pointer-events: none;
   }
 
   .preloader.is-hidden {
@@ -600,26 +600,75 @@
   }
 
   .preloader__brand {
+    position: relative;
+    z-index: 2;
     display: grid;
     place-items: center;
     gap: 1rem;
-    color: var(--cream);
+    color: var(--bottle-green);
     font-family: "Fraunces", Georgia, serif;
     font-size: 1rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
+    transition: opacity 220ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .preloader__panel {
+    position: absolute;
+    z-index: 0;
+    right: 0;
+    left: 0;
+    height: 50.1%;
+    background: var(--cream);
+    transition: transform 620ms cubic-bezier(0.65, 0, 0.35, 1) 160ms;
+    will-change: transform;
+  }
+
+  .preloader__panel--top { top: 0; }
+  .preloader__panel--bottom { bottom: 0; }
+
+  .preloader.is-revealing .preloader__panel--top {
+    transform: translate3d(0, -101%, 0);
+  }
+
+  .preloader.is-revealing .preloader__panel--bottom {
+    transform: translate3d(0, 101%, 0);
+  }
+
+  .preloader.is-revealing .preloader__brand {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  .preloader__seal {
+    display: grid;
+    width: 6.5rem;
+    height: 6.5rem;
+    place-items: center;
+    border: 1px solid rgba(163, 118, 58, 0.48);
+    border-radius: 999px;
+    background: rgba(163, 118, 58, 0.06);
+    box-shadow: inset 0 0 0 0 rgba(163, 118, 58, 0.12);
+    transform: scale(0.94);
+    transition: box-shadow 320ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .preloader.is-sealed .preloader__seal {
+    box-shadow: inset 0 0 0 0.45rem rgba(163, 118, 58, 0.09), 0 0.4rem 1.4rem rgba(32, 57, 42, 0.08);
+    transform: scale(1);
   }
 
   .preloader__rail {
     position: absolute;
+    z-index: 1;
+    top: 50%;
     right: 0;
-    bottom: 0;
     left: 0;
     height: 1px;
-    background: #d4b27b;
+    background: var(--brass);
     transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 300ms cubic-bezier(0.65, 0, 0.35, 1);
+    transform-origin: center;
+    transition: transform 420ms cubic-bezier(0.65, 0, 0.35, 1);
   }
 
   .preloader.is-revealing .preloader__rail {
@@ -628,7 +677,7 @@
 
   .preloader__copy {
     min-width: 14rem;
-    color: rgba(244, 237, 224, 0.7);
+    color: #526456;
     font-family: "Inter", Arial, sans-serif;
     font-size: 0.68rem;
     font-weight: 500;
@@ -641,7 +690,7 @@
   .logo-mark--preloader {
     width: 5rem;
     height: 5rem;
-    stroke: #d4b27b;
+    stroke: var(--brass);
     stroke-width: 0.85;
   }
 
@@ -936,6 +985,7 @@ html.bower-loader-seen .preloader {
   position: absolute;
   z-index: 2;
   inset: 0;
+  pointer-events: none;
   background: var(--bottle-green);
   transform: translate3d(0, 0, 0);
   will-change: transform;
@@ -1414,6 +1464,15 @@ select.form-control {
   color: var(--bottle-green);
 }
 
+.reservation-email-status {
+  color: rgba(26, 21, 18, 0.64);
+  font-size: 0.7rem;
+}
+
+.reservation-email-status[data-state="error"] {
+  color: #7b2d38;
+}
+
 .reservation-confirm {
   width: 100%;
   margin-top: 1rem;
@@ -1838,6 +1897,26 @@ select.form-control {
 
   .site-cursor.is-viewing .site-cursor__disc span {
     opacity: 1;
+  }
+
+  .site-cursor.is-candle {
+    mix-blend-mode: screen;
+  }
+
+  .site-cursor.is-candle .site-cursor__disc,
+  .site-cursor.is-candle.is-viewing .site-cursor__disc {
+    background: radial-gradient(
+      circle,
+      rgba(224, 180, 111, 0.34) 0,
+      rgba(198, 139, 65, 0.16) 32%,
+      rgba(163, 118, 58, 0) 72%
+    );
+    box-shadow: 0 0 1.4rem rgba(212, 178, 123, 0.1);
+    transform: scale(0.82);
+  }
+
+  .site-cursor.is-candle .site-cursor__disc span {
+    opacity: 0;
   }
 }
 

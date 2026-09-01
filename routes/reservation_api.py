@@ -10,16 +10,18 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from extensions import db
-from models import DiningTable, Reservation, Restaurant
+from models import DiningTable, NotificationKind, Reservation, Restaurant
 from services import (
     AvailabilityService,
     ReservationConflict,
     ReservationEligibilityError,
     ReservationNotFound,
+    NotificationService,
     ReservationRequest,
     ReservationService,
     ReservationStateError,
     UnsupportedPartySize,
+    dispatch_job_async,
 )
 
 
@@ -123,6 +125,7 @@ def create_reservation():
         try:
             reservation = service.create(parsed_request)
             response_payload = _reservation_payload(reservation, timezone_name)
+            reservation_id = reservation.id
         except UnsupportedPartySize as error:
             return _error(str(error), 400, "INVALID_PARTY_SIZE", "partySize")
         except ReservationEligibilityError as error:
@@ -142,7 +145,11 @@ def create_reservation():
                 "RESERVATIONS_UNAVAILABLE",
             )
 
-    return jsonify(ok=True, reservation=response_payload), 201
+    notification = _enqueue_notification(
+        reservation_id,
+        NotificationKind.BOOKING_CONFIRMATION,
+    )
+    return jsonify(ok=True, reservation=response_payload, notification=notification), 201
 
 
 @reservation_api.get("/api/reservations/<confirmation_code>")
@@ -193,15 +200,21 @@ def cancel_reservation(confirmation_code: str):
         try:
             reservation = service.cancel(normalized_code, email)
             response_payload = _reservation_payload(reservation, timezone_name)
+            reservation_id = reservation.id
         except ReservationNotFound:
             return _error("Reservation not found.", 404, "RESERVATION_NOT_FOUND")
         except ReservationStateError as error:
             return _error(str(error), 409, "INVALID_RESERVATION_STATE")
 
+    notification = _enqueue_notification(
+        reservation_id,
+        NotificationKind.CANCELLATION_CONFIRMATION,
+    )
     return jsonify(
         ok=True,
         message="Your reservation has been cancelled.",
         reservation=response_payload,
+        notification=notification,
     )
 
 
@@ -430,3 +443,22 @@ def _error(
     if field is not None:
         payload["field"] = field
     return jsonify(payload), status
+
+
+def _enqueue_notification(reservation_id: int, kind: NotificationKind) -> dict:
+    try:
+        with Session(db.engine) as session:
+            job = NotificationService(session).enqueue(reservation_id, kind)
+            payload = {
+                "status": job.status.value,
+                "message": "Your email is queued and will arrive shortly.",
+            }
+            job_id = job.id
+        dispatch_job_async(current_app._get_current_object(), job_id)
+        return payload
+    except Exception:
+        current_app.logger.exception("Reservation notification could not be queued")
+        return {
+            "status": "FAILED",
+            "message": "Your reservation is confirmed, but email is delayed. Keep your confirmation code.",
+        }

@@ -48,9 +48,9 @@
   let currentPhrase = "";
 
   const phraseFor = (value) => {
-    if (value < 0.33) return "Lighting the candles.";
-    if (value < 0.66) return "Setting the table.";
-    return "The room is ready.";
+    if (value < 0.33) return "An invitation for the evening.";
+    if (value < 0.66) return "The seal is set.";
+    return "The room awaits.";
   };
 
   const paint = () => {
@@ -141,7 +141,7 @@
     displayedProgress = 1;
     targetProgress = 1;
     paint();
-    wait(400).then(() => releasePage());
+    wait(80).then(() => releasePage({ moveFocus: false }));
     return;
   }
 
@@ -162,6 +162,7 @@
 
     displayedProgress = 1;
     paint();
+    preloader.classList.add("is-sealed");
     await wait(COMPLETE_HOLD_MS);
     preloader.classList.add("is-revealing");
     await wait(REVEAL_MS);
