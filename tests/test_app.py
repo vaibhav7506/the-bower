@@ -43,6 +43,8 @@ class TheBowerAppTests(unittest.TestCase):
         self.assertNotIn('id="availability-data"', page)
         self.assertIn("data-reservation-form", page)
         self.assertIn("data-confirmation-code", page)
+        self.assertIn("data-floor-plan", page)
+        self.assertIn("Choose for me", page)
         self.assertIn("data-newsletter-form", page)
         self.assertIn("data-event-dialog", page)
         self.assertIn("hero-graded-480.webp 480w", page)

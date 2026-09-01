@@ -1180,6 +1180,181 @@ select.form-control {
   margin-top: 0.6rem;
 }
 
+.table-choice {
+  margin-top: 1.7rem;
+  border-top: 1px solid rgba(163, 118, 58, 0.32);
+  padding-top: 1.5rem;
+}
+
+.table-choice__options {
+  display: grid;
+  margin-top: 0.8rem;
+  gap: 0.6rem;
+}
+
+.table-choice__options label {
+  position: relative;
+  cursor: pointer;
+}
+
+.table-choice__options input {
+  position: absolute;
+  opacity: 0;
+}
+
+.table-choice__options label > span {
+  display: flex;
+  min-height: 3.4rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(163, 118, 58, 0.35);
+  padding: 0.75rem 0.9rem;
+  color: var(--bottle-green);
+  font-family: "Fraunces", Georgia, serif;
+}
+
+.table-choice__options small {
+  color: rgba(26, 21, 18, 0.58);
+  font-family: "Inter", sans-serif;
+  font-size: 0.62rem;
+}
+
+.table-choice__options input:checked + span {
+  border-color: var(--brass);
+  background: rgba(163, 118, 58, 0.08);
+  box-shadow: inset 3px 0 var(--brass);
+}
+
+.table-choice__options input:focus-visible + span {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+.floor-plan {
+  margin-top: 1.25rem;
+  border: 1px solid rgba(163, 118, 58, 0.38);
+  background: rgba(244, 237, 224, 0.55);
+  padding: 1rem;
+}
+
+.floor-plan__heading {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.floor-plan__heading h3 {
+  margin-top: 0.35rem;
+  color: var(--bottle-green);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 430;
+}
+
+.floor-plan__heading > p {
+  color: rgba(26, 21, 18, 0.62);
+  font-size: 0.67rem;
+}
+
+.floor-plan__canvas {
+  position: relative;
+  height: clamp(20rem, 58vw, 29rem);
+  margin-top: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(163, 118, 58, 0.3);
+  background:
+    linear-gradient(90deg, transparent 49.8%, rgba(163, 118, 58, 0.1) 50%, transparent 50.2%),
+    linear-gradient(rgba(163, 118, 58, 0.08) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 25%;
+}
+
+.floor-plan__window,
+.floor-plan__bar,
+.floor-plan__private {
+  position: absolute;
+  color: rgba(163, 118, 58, 0.62);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.floor-plan__window { top: 0.7rem; left: 0.7rem; writing-mode: vertical-rl; }
+.floor-plan__bar { bottom: 0.7rem; left: 22%; }
+.floor-plan__private { right: 0.7rem; bottom: 0.7rem; }
+
+.floor-table {
+  position: absolute;
+  left: var(--table-x);
+  top: var(--table-y);
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  place-content: center;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--brass);
+  background: var(--cream);
+  color: var(--bottle-green);
+  font-size: 0.58rem;
+  line-height: 1;
+  text-align: center;
+  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.floor-table[data-shape="round"] { border-radius: 999px; }
+.floor-table[data-shape="rectangle"],
+.floor-table[data-shape="bar"] { width: 4.25rem; height: 2.75rem; }
+.floor-table[data-shape="bar"] { border-radius: 999px; }
+
+.floor-table small {
+  margin-top: 0.25rem;
+  color: inherit;
+  font-size: 0.5rem;
+  opacity: 0.62;
+}
+
+.floor-table[data-state="selected"] {
+  background: var(--brass);
+  color: #fffaf0;
+  box-shadow: 0 0 0 5px rgba(163, 118, 58, 0.12);
+}
+
+.floor-table[data-state="unavailable"],
+.floor-table[data-state="too-small"] {
+  border-color: rgba(26, 21, 18, 0.22);
+  background: rgba(26, 21, 18, 0.05);
+  color: rgba(26, 21, 18, 0.36);
+}
+
+.floor-table[data-state="too-small"] { border-style: dashed; }
+
+.floor-table:focus-visible {
+  outline: 2px solid var(--bottle-green);
+  outline-offset: 3px;
+}
+
+.floor-plan__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  margin-top: 0.85rem;
+  color: rgba(26, 21, 18, 0.62);
+  font-size: 0.58rem;
+}
+
+.floor-plan__legend span::before {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 0.35rem;
+  border: 1px solid var(--brass);
+  content: "";
+}
+
+.floor-plan__legend [data-state="selected"]::before { background: var(--brass); }
+.floor-plan__legend [data-state="unavailable"]::before { border-color: rgba(26, 21, 18, 0.22); background: rgba(26, 21, 18, 0.08); }
+.floor-plan__legend [data-state="too-small"]::before { border-color: rgba(26, 21, 18, 0.22); border-style: dashed; }
+
 .reservation-details,
 .reservation-success {
   margin-top: 1.7rem;

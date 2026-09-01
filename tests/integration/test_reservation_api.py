@@ -74,6 +74,13 @@ def test_availability_endpoint_returns_live_slots_and_tables(client) -> None:
     assert payload["timezone"] == "Asia/Kolkata"
     assert payload["slots"][0]["time"] == "12:00"
     assert [table["capacity"] for table in payload["slots"][0]["tables"]] == [6, 8]
+    assert len(payload["floorPlan"]["tables"]) == 8
+    assert payload["floorPlan"]["tables"][0]["shape"] in {
+        "ROUND",
+        "SQUARE",
+        "RECTANGLE",
+        "BAR",
+    }
 
 
 @pytest.mark.parametrize(

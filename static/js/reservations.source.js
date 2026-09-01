@@ -25,6 +25,11 @@ if (widget) {
   const timeSlots = widget.querySelector("[data-time-slots]");
   const partySize = widget.querySelector("[data-party-size]");
   const reservationForm = widget.querySelector("[data-reservation-form]");
+  const tableChoice = widget.querySelector("[data-table-choice]");
+  const tableModes = [...widget.querySelectorAll("[data-table-mode]")];
+  const floorPlan = widget.querySelector("[data-floor-plan]");
+  const floorPlanCanvas = widget.querySelector("[data-floor-plan-canvas]");
+  const tableDetail = widget.querySelector("[data-table-detail]");
   const reservationSummary = widget.querySelector("[data-reservation-summary]");
   const confirmButton = widget.querySelector("[data-reservation-confirm]");
   const successPanel = widget.querySelector("[data-reservation-success]");
@@ -39,6 +44,9 @@ if (widget) {
   let selectedDate = null;
   let selectedSlot = null;
   let availableSlots = [];
+  let floorPlanTables = [];
+  let tableMode = "automatic";
+  let selectedTableId = null;
   let availabilityRequest = 0;
 
   const dateKey = (date) => format(date, "yyyy-MM-dd");
@@ -57,15 +65,81 @@ if (widget) {
 
   const resetDetails = () => {
     selectedSlot = null;
+    selectedTableId = null;
+    tableChoice.hidden = true;
+    floorPlan.hidden = true;
     reservationForm.hidden = true;
     successPanel.hidden = true;
   };
 
   const showDetails = () => {
     if (!selectedDate || !selectedSlot) return;
+    if (tableMode === "map" && selectedTableId === null) {
+      reservationForm.hidden = true;
+      return;
+    }
     reservationSummary.textContent = `${format(selectedDate, "EEEE, d MMMM")} at ${selectedSlot.label} · ${partySize.value} guests`;
     reservationForm.hidden = false;
     successPanel.hidden = true;
+  };
+
+  const sectionLabel = (section) => ({
+    MAIN_DINING: "Main dining room",
+    WINDOW: "Window seating",
+    PRIVATE: "Private room",
+    BAR: "Bar seating",
+    TERRACE: "Terrace"
+  })[section] || "Dining room";
+
+  const renderFloorPlan = () => {
+    floorPlanCanvas.querySelectorAll("button").forEach((button) => button.remove());
+    if (!selectedSlot) return;
+    const availableIds = new Set(selectedSlot.tables.map((table) => table.id));
+
+    floorPlanTables.forEach((table) => {
+      const available = availableIds.has(table.id);
+      const state = table.capacity < Number(partySize.value)
+        ? "too-small"
+        : available
+          ? (selectedTableId === table.id ? "selected" : "available")
+          : "unavailable";
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "floor-table";
+      button.dataset.state = state;
+      button.dataset.shape = table.shape.toLowerCase();
+      button.style.setProperty("--table-x", `${table.x}%`);
+      button.style.setProperty("--table-y", `${table.y}%`);
+      button.disabled = !available;
+      button.setAttribute("aria-pressed", String(selectedTableId === table.id));
+      button.setAttribute("aria-label", `${table.name}, ${sectionLabel(table.section)}, seats up to ${table.capacity}${table.accessible ? ", accessible" : ""}, ${state.replace("-", " ")}`);
+      button.innerHTML = `<span>${table.name.replace("Table ", "T").replace("Bar ", "B")}</span><small>${table.capacity}</small>`;
+      button.addEventListener("focus", () => {
+        tableDetail.textContent = `${table.name} · ${sectionLabel(table.section)} · Seats up to ${table.capacity}${table.accessible ? " · Accessible" : ""}`;
+      });
+      button.addEventListener("pointerenter", () => {
+        tableDetail.textContent = `${table.name} · ${sectionLabel(table.section)} · Seats up to ${table.capacity}${table.accessible ? " · Accessible" : ""}`;
+      });
+      button.addEventListener("click", () => {
+        selectedTableId = table.id;
+        renderFloorPlan();
+        showDetails();
+        announce(`${table.name} selected. Add your details to confirm the reservation.`);
+      });
+      floorPlanCanvas.append(button);
+    });
+  };
+
+  const showSeatingChoices = () => {
+    tableChoice.hidden = false;
+    floorPlan.hidden = tableMode !== "map";
+    if (tableMode === "map") {
+      renderFloorPlan();
+      tableDetail.textContent = selectedTableId
+        ? "Your selected table is outlined in brass."
+        : "Select an outlined table.";
+    }
+    showDetails();
   };
 
   const renderTimes = () => {
@@ -98,9 +172,12 @@ if (widget) {
 
       button.addEventListener("click", () => {
         selectedSlot = slot;
+        selectedTableId = null;
+        tableMode = "automatic";
+        tableModes.forEach((mode) => { mode.checked = mode.value === "automatic"; });
         renderTimes();
-        showDetails();
-        announce(`${slot.label} selected. Add your details to confirm the reservation.`);
+        showSeatingChoices();
+        announce(`${slot.label} selected. Choose a seating preference.`);
       });
       timeSlots.append(button);
     });
@@ -125,6 +202,7 @@ if (widget) {
         ...slot,
         label: new Intl.DateTimeFormat(undefined, {hour: "numeric", minute: "2-digit"}).format(new Date(slot.startsAt))
       }));
+      floorPlanTables = payload.floorPlan?.tables || [];
       renderTimes();
       announce(availableSlots.length
         ? `${availableSlots.length} reservation times are available. Choose a time.`
@@ -196,6 +274,7 @@ if (widget) {
       date: dateKey(selectedDate),
       time: selectedSlot.time,
       partySize: Number(partySize.value),
+      tableId: selectedTableId || undefined,
       customer: {
         name: formData.get("name"),
         email: formData.get("email"),
@@ -235,6 +314,16 @@ if (widget) {
   partySize.addEventListener("change", () => {
     if (selectedDate) fetchAvailability();
   });
+  tableModes.forEach((mode) => mode.addEventListener("change", () => {
+    tableMode = mode.value;
+    selectedTableId = null;
+    floorPlan.hidden = tableMode !== "map";
+    renderFloorPlan();
+    showDetails();
+    announce(tableMode === "map"
+      ? "Choose an available table from the dining room map."
+      : "We will choose the most suitable available table for you.");
+  }));
   previousButton.addEventListener("click", () => {
     visibleMonth = startOfMonth(subMonths(visibleMonth, 1));
     renderCalendar();

@@ -292,9 +292,44 @@
           <option value="8">8 guests</option>
         </select>
 
+        <fieldset class="table-choice" data-table-choice hidden>
+          <legend class="reservation-widget__step">03 / Seating preference</legend>
+          <div class="table-choice__options">
+            <label>
+              <input type="radio" name="table-choice" value="automatic" checked data-table-mode>
+              <span>Choose for me <small>We’ll select the best fit</small></span>
+            </label>
+            <label>
+              <input type="radio" name="table-choice" value="map" data-table-mode>
+              <span>Select a table <small>Explore the dining room</small></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <section class="floor-plan" data-floor-plan hidden aria-labelledby="floor-plan-title">
+          <div class="floor-plan__heading">
+            <div>
+              <p class="reservation-widget__step">The dining room</p>
+              <h3 id="floor-plan-title">Choose where the evening unfolds.</h3>
+            </div>
+            <p data-table-detail aria-live="polite">Select an outlined table.</p>
+          </div>
+          <div class="floor-plan__canvas" data-floor-plan-canvas role="group" aria-label="Available dining tables">
+            <span class="floor-plan__window" aria-hidden="true">Garden windows</span>
+            <span class="floor-plan__bar" aria-hidden="true">Bar</span>
+            <span class="floor-plan__private" aria-hidden="true">Private room</span>
+          </div>
+          <div class="floor-plan__legend" aria-hidden="true">
+            <span data-state="available">Available</span>
+            <span data-state="selected">Selected</span>
+            <span data-state="unavailable">Unavailable</span>
+            <span data-state="too-small">Too small</span>
+          </div>
+        </section>
+
         <form class="reservation-details" data-reservation-form hidden novalidate>
           <div class="reservation-details__heading">
-            <p class="reservation-widget__step">03 / Your details</p>
+            <p class="reservation-widget__step">04 / Your details</p>
             <p data-reservation-summary></p>
           </div>
           <div class="reservation-details__grid">

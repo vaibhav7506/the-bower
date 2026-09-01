@@ -10,7 +10,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from extensions import db
-from models import Reservation, Restaurant
+from models import DiningTable, Reservation, Restaurant
 from services import (
     AvailabilityService,
     ReservationConflict,
@@ -69,12 +69,23 @@ def availability():
         minutes=current_app.config["RESERVATION_MINIMUM_NOTICE_MINUTES"]
     )
     visible_slots = tuple(slot for slot in slots if slot.starts_at >= minimum_start)
+    floor_plan_tables = tuple(
+        db.session.scalars(
+            select(DiningTable)
+            .where(
+                DiningTable.restaurant_id == restaurant.id,
+                DiningTable.active.is_(True),
+            )
+            .order_by(DiningTable.display_name)
+        )
+    )
     return jsonify(
         ok=True,
         date=service_date.isoformat(),
         partySize=party_size,
         timezone=restaurant.timezone,
         slots=[_slot_payload(slot) for slot in visible_slots],
+        floorPlan={"tables": [_floor_plan_table_payload(table) for table in floor_plan_tables]},
     )
 
 
@@ -320,6 +331,19 @@ def _slot_payload(slot) -> dict:
             }
             for table in slot.available_tables
         ],
+    }
+
+
+def _floor_plan_table_payload(table: DiningTable) -> dict:
+    return {
+        "id": table.id,
+        "name": table.display_name,
+        "capacity": table.capacity,
+        "section": table.section.value,
+        "shape": table.shape.value,
+        "x": table.x_position,
+        "y": table.y_position,
+        "accessible": table.accessible,
     }
 
 
