@@ -247,13 +247,12 @@
         <p class="eyebrow">Reservations</p>
         <h2 id="reserve-title">Make an evening<br>of it.</h2>
         <p>
-          Choose a date, a time, and the number at your table. Availability shown here is a
-          considered portfolio simulation rather than a live restaurant booking feed.
+          Choose a date, a time, and the number at your table. Every time shown is checked
+          against the dining room before your reservation is confirmed.
         </p>
       </div>
 
       <div class="reservation-widget" data-reservation-widget>
-        <script id="availability-data" type="application/json">{{ availability | tojson }}</script>
         <div class="reservation-widget__header">
           <div>
             <p class="reservation-widget__step">01 / Date</p>
@@ -277,7 +276,9 @@
             <p class="reservation-widget__step">02 / Time</p>
             <p class="selected-date" data-selected-date>Select a date to see times</p>
           </div>
-          <div class="time-slots" data-time-slots role="group" aria-label="Available reservation times"></div>
+          <div class="time-slots" data-time-slots role="group" aria-label="Available reservation times">
+            <p class="reservation-empty">Choose a date to see live availability.</p>
+          </div>
         </div>
 
         <label class="field-label" for="reservation-party-size">Party size</label>
@@ -291,10 +292,40 @@
           <option value="8">8 guests</option>
         </select>
 
-        <button class="reservation-confirm" type="button" data-reservation-confirm disabled>
-          Hold this table
-        </button>
-        <p class="form-status" data-reservation-status aria-live="polite"></p>
+        <form class="reservation-details" data-reservation-form hidden novalidate>
+          <div class="reservation-details__heading">
+            <p class="reservation-widget__step">03 / Your details</p>
+            <p data-reservation-summary></p>
+          </div>
+          <div class="reservation-details__grid">
+            <label>
+              <span>Name</span>
+              <input class="form-control" name="name" autocomplete="name" required maxlength="120">
+            </label>
+            <label>
+              <span>Email</span>
+              <input class="form-control" name="email" type="email" autocomplete="email" required maxlength="254">
+            </label>
+            <label>
+              <span>Phone <small>(optional)</small></span>
+              <input class="form-control" name="phone" type="tel" autocomplete="tel" maxlength="32">
+            </label>
+            <label class="reservation-details__requests">
+              <span>Special requests <small>(optional)</small></span>
+              <textarea class="form-control" name="specialRequests" rows="3" maxlength="2000"></textarea>
+            </label>
+          </div>
+          <button class="reservation-confirm" type="submit" data-reservation-confirm>
+            Confirm reservation
+          </button>
+        </form>
+        <div class="reservation-success" data-reservation-success hidden tabindex="-1">
+          <p class="reservation-widget__step">Reservation confirmed</p>
+          <h3>Your table is waiting.</h3>
+          <p data-confirmation-summary></p>
+          <p class="reservation-code">Confirmation <strong data-confirmation-code></strong></p>
+        </div>
+        <p class="form-status" data-reservation-status aria-live="polite" aria-atomic="true"></p>
       </div>
     </div>
   </section>

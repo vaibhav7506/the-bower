@@ -6,7 +6,6 @@ import re
 from datetime import date
 from pathlib import Path
 
-import yaml
 from flask import Flask, current_app, jsonify, render_template, request
 from flask_compress import Compress
 from sqlalchemy import create_engine, select
@@ -22,7 +21,6 @@ from routes import reservation_api
 
 PROJECT_ROOT = Path(__file__).parent
 MENU_PATH = PROJECT_ROOT / "static" / "data" / "menu.json"
-AVAILABILITY_PATH = PROJECT_ROOT / "static" / "data" / "availability.yaml"
 VERSIONED_ASSETS = (
     PROJECT_ROOT / "static" / "css" / "site.css",
     PROJECT_ROOT / "static" / "js" / "loader.js",
@@ -121,8 +119,7 @@ def create_app(test_config: dict[str, object] | None = None) -> Flask:
     @app.get("/")
     def home():
         menu = json.loads(MENU_PATH.read_text(encoding="utf-8"))
-        availability = yaml.safe_load(AVAILABILITY_PATH.read_text(encoding="utf-8"))
-        return render_template("index.html", menu=menu, availability=availability)
+        return render_template("index.html", menu=menu)
 
     @app.post("/api/newsletter")
     def newsletter_signup():

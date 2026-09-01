@@ -1103,6 +1103,26 @@ html.bower-loader-seen .preloader {
   gap: 0.5rem;
 }
 
+.reservation-empty {
+  grid-column: 1 / -1;
+  align-self: center;
+  color: rgba(26, 21, 18, 0.62);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.reservation-empty.is-loading::before {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 0.55rem;
+  border: 1px solid rgba(163, 118, 58, 0.35);
+  border-top-color: var(--brass);
+  border-radius: 999px;
+  animation: reservation-spin 700ms linear infinite;
+  content: "";
+}
+
 .time-slot {
   display: flex;
   align-items: center;
@@ -1160,6 +1180,65 @@ select.form-control {
   margin-top: 0.6rem;
 }
 
+.reservation-details,
+.reservation-success {
+  margin-top: 1.7rem;
+  border-top: 1px solid rgba(163, 118, 58, 0.32);
+  padding-top: 1.5rem;
+}
+
+.reservation-details__heading > p:last-child {
+  margin-top: 0.45rem;
+  color: var(--bottle-green);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.05rem;
+}
+
+.reservation-details__grid {
+  display: grid;
+  margin-top: 1.25rem;
+  gap: 1rem;
+}
+
+.reservation-details__grid label > span {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: rgba(26, 21, 18, 0.72);
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.reservation-details__grid small {
+  font-weight: 400;
+}
+
+.reservation-details__requests {
+  grid-column: 1 / -1;
+}
+
+.reservation-success h3 {
+  margin-top: 0.45rem;
+  color: var(--bottle-green);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.65rem;
+}
+
+.reservation-success > p:not(.reservation-widget__step) {
+  margin-top: 0.65rem;
+  line-height: 1.6;
+}
+
+.reservation-code {
+  color: var(--brass);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reservation-code strong {
+  color: var(--bottle-green);
+}
+
 .reservation-confirm {
   width: 100%;
   margin-top: 1rem;
@@ -1183,6 +1262,18 @@ select.form-control {
   color: rgba(26, 21, 18, 0.66);
   font-size: 0.72rem;
   line-height: 1.5;
+}
+
+.form-status[data-state="error"] {
+  color: #7b2d38;
+}
+
+.form-status[data-state="success"] {
+  color: var(--bottle-green);
+}
+
+@keyframes reservation-spin {
+  to { transform: rotate(360deg); }
 }
 
 .scroll-progress {
