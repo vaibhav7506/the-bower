@@ -6,7 +6,9 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 
-from app import app, initialize_database
+from app import create_app, initialize_database
+from config import sqlite_uri
+from extensions import db
 
 
 class TheBowerAppTests(unittest.TestCase):
@@ -14,10 +16,18 @@ class TheBowerAppTests(unittest.TestCase):
         self.temp_directory = tempfile.TemporaryDirectory()
         self.database_path = Path(self.temp_directory.name) / "test.db"
         initialize_database(self.database_path)
-        app.config.update(TESTING=True, DATABASE=self.database_path)
-        self.client = app.test_client()
+        self.app = create_app(
+            {
+                "TESTING": True,
+                "SQLALCHEMY_DATABASE_URI": sqlite_uri(self.database_path),
+            }
+        )
+        self.client = self.app.test_client()
 
     def tearDown(self) -> None:
+        with self.app.app_context():
+            db.session.remove()
+            db.engine.dispose()
         self.temp_directory.cleanup()
 
     def test_home_renders_menu_and_reservation_data(self) -> None:

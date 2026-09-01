@@ -1,0 +1,3 @@
+Database migrations for The Bower reservation domain.
+
+Apply them with `flask --app app db upgrade`.

@@ -3,14 +3,20 @@ from __future__ import annotations
 import json
 import os
 import re
-import sqlite3
-from contextlib import closing
-from datetime import timedelta
+from datetime import date
 from pathlib import Path
 
 import yaml
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, current_app, jsonify, render_template, request
 from flask_compress import Compress
+from sqlalchemy import create_engine, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
+from config import Config, sqlite_uri
+from extensions import db, migrate
+from models import NewsletterSubscriber, PrivateEventInquiry
+from models.seed import seed_restaurant_domain
 
 
 PROJECT_ROOT = Path(__file__).parent
@@ -28,59 +34,33 @@ EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
 
 def initialize_database(database_path: Path) -> None:
+    """Create and seed an isolated database for development and tests."""
     database_path.parent.mkdir(parents=True, exist_ok=True)
-    with closing(sqlite3.connect(database_path)) as connection:
-        connection.executescript(
-            """
-            CREATE TABLE IF NOT EXISTS newsletter_subscribers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email TEXT NOT NULL UNIQUE,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-
-            CREATE TABLE IF NOT EXISTS private_event_inquiries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                email TEXT NOT NULL,
-                event_date TEXT NOT NULL,
-                party_size INTEGER NOT NULL,
-                message TEXT NOT NULL,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-            """
-        )
-        connection.commit()
+    engine = create_engine(sqlite_uri(database_path))
+    db.metadata.create_all(bind=engine)
+    with Session(engine) as session:
+        seed_restaurant_domain(session)
+    engine.dispose()
 
 
-def create_app() -> Flask:
+def create_app(test_config: dict[str, object] | None = None) -> Flask:
     app = Flask(__name__)
-    database_path = Path(
-        os.environ.get("DATABASE_PATH", str(Path(app.instance_path) / "the_bower.db"))
-    )
-    public_base_url = (
-        os.environ.get("PUBLIC_BASE_URL")
-        or os.environ.get("RENDER_EXTERNAL_URL")
-        or "http://127.0.0.1:5000"
-    ).rstrip("/")
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get("SECRET_KEY", "development-only-change-before-production"),
-        DATABASE=database_path,
-        PUBLIC_BASE_URL=public_base_url,
-        SEND_FILE_MAX_AGE_DEFAULT=timedelta(days=30),
-        COMPRESS_MIMETYPES=(
-            "text/html",
-            "text/css",
-            "application/javascript",
-            "application/json",
-            "image/svg+xml",
-        ),
-    )
+    app.config.from_object(Config)
+    if test_config:
+        app.config.update(test_config)
+
+    db.init_app(app)
+    migrate.init_app(app, db)
     Compress(app)
-    initialize_database(app.config["DATABASE"])
+
+    @app.cli.command("seed-domain")
+    def seed_domain_command() -> None:
+        seed_restaurant_domain(db.session)
+        print("The Bower restaurant domain is ready.")
 
     @app.context_processor
     def site_metadata() -> dict[str, object]:
-        base_url = app.config["PUBLIC_BASE_URL"]
+        base_url = current_app.config["PUBLIC_BASE_URL"]
         asset_version = os.environ.get("ASSET_VERSION") or str(
             max(asset.stat().st_mtime_ns for asset in VERSIONED_ASSETS)
         )
@@ -104,13 +84,27 @@ def create_app() -> Flask:
             "openingHoursSpecification": [
                 {
                     "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    "dayOfWeek": [
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday",
+                        "Sunday",
+                    ],
                     "opens": "12:00",
                     "closes": "15:00",
                 },
                 {
                     "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    "dayOfWeek": [
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday",
+                        "Sunday",
+                    ],
                     "opens": "18:00",
                     "closes": "23:00",
                 },
@@ -136,17 +130,19 @@ def create_app() -> Flask:
         if not EMAIL_PATTERN.fullmatch(email) or len(email) > 254:
             return jsonify(ok=False, message="Please enter a valid email address."), 400
 
-        with closing(sqlite3.connect(app.config["DATABASE"])) as connection:
-            cursor = connection.execute(
-                "INSERT OR IGNORE INTO newsletter_subscribers (email) VALUES (?)",
-                (email,),
-            )
-            connection.commit()
-
-        if cursor.rowcount == 0:
+        existing_subscriber = db.session.scalar(
+            select(NewsletterSubscriber).where(NewsletterSubscriber.email == email)
+        )
+        if existing_subscriber is not None:
             message = "You’re already on the list. We’ll be in touch quietly."
         else:
-            message = "Thank you. Seasonal notes will arrive occasionally."
+            db.session.add(NewsletterSubscriber(email=email))
+            try:
+                db.session.commit()
+                message = "Thank you. Seasonal notes will arrive occasionally."
+            except IntegrityError:
+                db.session.rollback()
+                message = "You’re already on the list. We’ll be in touch quietly."
 
         return jsonify(ok=True, message=message)
 
@@ -155,7 +151,7 @@ def create_app() -> Flask:
         payload = request.get_json(silent=True) or request.form
         name = str(payload.get("name", "")).strip()
         email = str(payload.get("email", "")).strip().lower()
-        event_date = str(payload.get("event_date", "")).strip()
+        event_date_value = str(payload.get("event_date", "")).strip()
         message = str(payload.get("message", "")).strip()
 
         try:
@@ -167,23 +163,28 @@ def create_app() -> Flask:
             return jsonify(ok=False, message="Please tell us your name."), 400
         if not EMAIL_PATTERN.fullmatch(email) or len(email) > 254:
             return jsonify(ok=False, message="Please enter a valid email address."), 400
-        if not event_date:
+        try:
+            event_date = date.fromisoformat(event_date_value)
+        except ValueError:
             return jsonify(ok=False, message="Please choose a preferred date."), 400
         if not 1 <= party_size <= 200:
             return jsonify(ok=False, message="Party size must be between 1 and 200."), 400
         if not message or len(message) > 2000:
-            return jsonify(ok=False, message="Please add a short note (up to 2,000 characters)."), 400
+            return jsonify(
+                ok=False,
+                message="Please add a short note (up to 2,000 characters).",
+            ), 400
 
-        with closing(sqlite3.connect(app.config["DATABASE"])) as connection:
-            connection.execute(
-                """
-                INSERT INTO private_event_inquiries
-                    (name, email, event_date, party_size, message)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (name, email, event_date, party_size, message),
+        db.session.add(
+            PrivateEventInquiry(
+                name=name,
+                email=email,
+                event_date=event_date,
+                party_size=party_size,
+                message=message,
             )
-            connection.commit()
+        )
+        db.session.commit()
 
         return jsonify(
             ok=True,
