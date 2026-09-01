@@ -37,6 +37,12 @@ The reservation domain is modeled with SQLAlchemy and versioned through Alembic.
 `flask --app app db migrate -m "description"` after deliberate model changes, review
 the generated migration, then apply it with `flask --app app db upgrade`.
 
+`services/availability.py` owns the booking rules used by future API routes. Its
+defaults are centralized in `AvailabilitySettings`: 15-minute slot intervals, a
+15-minute reset buffer, and seating durations that scale from 90 to 135 minutes by
+party size. It validates opening periods, final seating, closures, table capacity,
+active reservations, and active table state without relying on browser data.
+
 The image build is deterministic and safe to rerun. Source PNG files remain in place;
 generated WebP variants and `static/img/og-bower.jpg` are deployment assets.
 
