@@ -184,7 +184,7 @@ def upgrade() -> None:
             sa.Column("ends_at", sa.Time(), nullable=True),
             *timestamp_columns(),
             sa.CheckConstraint(
-                ""full_day IS TRUE OR (starts_at IS NOT NULL AND ends_at IS NOT NULL)"",
+                "full_day IS TRUE OR (starts_at IS NOT NULL AND ends_at IS NOT NULL)",
                 name="ck_special_closure_window",
             ),
             sa.CheckConstraint(
