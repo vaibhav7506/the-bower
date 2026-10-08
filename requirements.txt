@@ -7,3 +7,4 @@ gunicorn>=23,<24
 Pillow>=11,<12
 SQLAlchemy>=2.0,<3
 psycopg2-binary
+psycopg[binary]>=3.2,<4
